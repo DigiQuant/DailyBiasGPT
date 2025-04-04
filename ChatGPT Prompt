@@ -1,120 +1,201 @@
-Please perform a detailed astrological analysis to determine the daily market bias and expected price action characteristics for [Date of Transit Chart, e.g., March 27, 2025], based on the provided Natal Chart data for [Date of Natal Chart, e.g., March 4, 1957] and the Transit Chart data.
+🔮 Elite Astro-Financial Daily Market Forecasting Prompt (V3.0)
+Multi-Varga Fusion (D1–D16) | Volatility Risk Matrix | ASC Diagnostics | Institutional Drain Engine
 
-Focus exclusively on these planets: Sun, Moon, Mars, Venus, Mercury, Rahu (True Node), and Ketu (True S. Node).
+📅 Forecast Request Format
+Determine the market bias and expected price action for [Transit Date] using the S&P 500 Natal Chart (March 4, 1957, 9:30 AM, New York) and full Transit Chart.
+⚙️ Input Assumptions
+House System: Sripathi
 
-Input Data Provided:
+Ayanamsa: Lahiri
 
-Natal Chart Details: Planetary positions (Sign, Degree), House Placements (Sripathi/Lahiri), Nakshatra, Pada, Nakshatra Lords, House Lordships.
+Bhava Madhya: Enabled
 
-Transit Chart Details: Planetary positions (Sign, Degree), House Placements relative to Natal Ascendant (Sripathi/Lahiri), Nakshatra, Pada, Nakshatra Lords, House Lordship based on Transit placement relative to Natal Ascendant.
+Nakshatra Data: Name, Pada, Trend, Weight, Lord Status
 
-Natal Strength Data: Natal Shadbala table, Natal Bhavabala table, Natal Sarvashtakavarga table, Natal Bhinnashtaka Varga tables for each planet.
+Charts Used: D1, D3, D7, D9, D10, D16 (Natal + Transit)
 
-Planetary Speed: Planetary speeds and classifications (Fast, Slow, Normal, Rx, Stationary).
+Divisional Timing Overlays: D1, D9, D16
 
-Transit Aspects: Transit-to-Natal aspects for specified planets, orb, and status (Applying/Separating). Use max orb 5 degrees for conjunction, opposition, square, trine, and sextile.
+Aspect Window: Transit–Natal + Transit–Transit ≤ 5° orb
 
-Nakshatra Reference Table: Nakshatra boundaries, rulers, weights, and directional trends (Bullish/Bearish). Include Nakshatra weights explicitly in your reply.
+Tables Referenced: SAV, BAV (Natal & Transit), Shadbala, Bhavabala
 
-Analysis Requirements:
+🪐 Planetary Assessment Framework (V3.0)
+For each of: ☉ ☽ ☿ ♀ ♂ ☊ ☋
 
-For each planet (Sun, Moon, Mars, Venus, Mercury, Rahu, Ketu):
+🔹 1. Natal Foundation
+D1 Sign + House (Madhya-based)
 
-Natal Foundation:
+D9 Sign + Dignity (Own, Exalted, Debilitated, Friendly, Inimical)
 
-Summarize natal placement (Sign, House).
+D3/D7/D10/D16 overlays for house resonance
 
-Indicate strength clearly (Shadbala ratio/rank, Bhavabala for its house, SAV score). Note significant weaknesses.
+House Lord Rasi + D9 dignity + Rx
 
-Natal Nakshatra influence (Lord, Weight, Trend). Assess Nakshatra Lord's natal condition briefly.
+Shadbala, Bhavabala
 
-Assess Natal Lord of occupied House and its condition (strength/weakness).
+SAV / BAV scoring
 
-Transit Activation:
+Nakshatra Lord dignity in D1 & D9
 
-Transit placement (Sign, Degree, Speed).
+🔹 2. Transit Activation
+D1 Sign + Bhava (Madhya-based)
 
-Identify transiting House relative to Natal Ascendant.
+D9 Placement + Dignity
 
-Transit House & Lord Analysis:
+D3, D10, D16 House Overlays
 
-Classify transited house nature (Dusthana, Trikona, Kendra, Upachaya).
+Nakshatra: Weight × Trend Polarity
 
-Evaluate inherent house influence (e.g., gains, obstacles, action).
+Speed Class: Very Fast / Fast / Slow / Retro
 
-Analyze condition of Natal Lord of transited house during transit (Sign, House, Dignity, Rx, Speed, Aspects). State if this condition supports, undermines, or is neutral to the house potential.
+House Type: Kendra / Trikona / Dusthana / Upachaya
 
-Crucially, also assess the dignity and condition of the planet currently transiting the house. Does its strength/weakness potentially override or strongly modify the House Lord's influence for the immediate day, especially for fast planets like the Moon? Give significant weight to both factors.
+Planet in Bhava Sandhi (<7° from Cusp) → Sentiment Fade
 
-Transit Nakshatra Analysis:
+Lord of transit house dignity (Rasi + D9)
 
-State Nakshatra (Lord, Weight, Trend).
+Aspect Matrix: T–N + T–T (strength, affliction)
 
-Assess condition of the Nakshatra Lord during transit (placement, Rx, speed, aspects).
+🔁 Check for Cusp + Rx + Aspect Stack = High-Pivot Risk
 
-Explicitly discuss if Nakshatra Lord's condition strengthens, weakens, or potentially reverses the Nakshatra's directional trend, considering the Nakshatra's Weight.
+🧠 Advanced Diagnostic Modules
+🧩 Multi-Varga Bhava Echo Matrix (Amplification Map)
+D1 + D10 + D16 → Institutional Bias
 
-Also consider the condition of the planet transiting the Nakshatra. If the transiting planet is very strong (e.g., exalted Moon) in a high-weight positive Nakshatra, acknowledge this as a strong immediate signal, even if the Nakshatra Lord has issues.
+D1 + D9 + D7 → Trend + Sentiment Bias
 
-Aspect Analysis:
+Kendra/Trikona overlays → Strength
 
-Highlight only applying aspects (within 5° orb) from transit planets to natal Sun, Moon, Mercury, Venus, Mars, Ascendant, or MC.
+Dusthana overlays → Fragility / Risk
 
-Label aspects as harmonious (supportive/bullish potential) or disharmonious (stressful/bearish/volatile potential).
+🧯 Trigger Patterns
 
-Strongly emphasize conjunctions, squares, oppositions, especially involving Rx or debilitated planets, noting their potential for sharp, disruptive, or unexpected effects. Note separating aspects as fading influences.
+12H Jupiter (D1 + D10 + D16) = Institutional Pullout
 
-Retrograde Status (High Weight for Volatility/Unpredictability):
+11H Mars (D1) + 6H Mars (D16) = Volatility Spike
 
-Strongly emphasize Rx planets, especially Rx + Debilitation/Affliction (e.g., Mercury, Venus), as dominant drivers of volatility, unpredictability, confusion, potential for sharp reversals (in either direction), and underlying market fragility.
+🔢 D9 Fragility Index (V3.0)
+Score	Meaning
++2	Strong Rasi + Strong D9
++1	Strong Rasi / Weak D9
+0	Weak Rasi / Strong D9
+–1	Weak Rasi + Neutral D9
+–2	Weak Rasi + D9 Debilitated or Rx
+📛 Structural Fragility Trigger: ≥2 planets in same house scoring –2 (D9/D16) → Bias Downgrade
+📉 Fragility Threshold Flag: Total ≤ –3 → Weak Day Bias / Volatility Risk
 
-Discuss the increased likelihood of deviations from expected trends, technical failures, rumour-driven moves, or unsustainable price action, rather than solely predicting negative price action. Acknowledge that intense affliction can sometimes fuel sharp, albeit potentially irrational or short-lived, moves against the apparent trend.
+🧿 Nakshatra Reversal Engine (Weighted)
+Nakshatra Reversal Weight = Trend × Weight × Lord Weakness Multiplier
 
-Planetary Speed:
+Triggered when:
 
-Clearly integrate speed: Fast Moon = driver of intraday sentiment and immediate swings. Slow planets (like Rx Mercury/Venus, slow Mars) = background conditions, sustained pressure, or potential for delayed reactions.
+Lord is debilitated / combust / Rx
 
-Planet Synthesis:
+Lord is in hard aspect with malefics, Pluto, or Neptune
 
-Integrate natal foundation, transit activation, house (planet-in-house vs. lord), nakshatra (planet-in-nakshatra vs. lord), aspects, Rx status, and speed.
+Moon is in Dusthana Nakshatra + afflicted
 
-Explicitly state the type of influence: supportive (bullish), challenging (bearish), erratic/confusing (volatile), mixed. Assign a directional bias potential (e.g., Bullish potential, Bearish pressure, High Volatility expected).
+Dominant Weight (>1.5) = Overrides other signals
 
-Overall Synthesis and Daily Bias:
+⚠️ Aspect Matrix Intelligence (V3.0)
+Malefic in hard aspect → Sentiment drain
 
-Collate Influences: Clearly separate factors suggesting Bullish potential from factors suggesting Bearish pressure or High Volatility/Confusion.
+Rx planet in hard aspect → False signals / breakdown
 
-Weighting Dynamics:
+Notable flags:
 
-Assign High Weight to Mercury Rx/Debilitated and Venus Rx/Debilitated primarily as indicators of High Volatility, Unpredictability, Reversal Risk, and potential for Systemic Stress, rather than purely bearish direction. State clearly how they distort market rationality and flow.
+Venus Rx + Neptune = Trap Rally
 
-Critically Assess Moon Influence: Give significant weight to the fast-moving Moon for intraday sentiment and initial direction, especially if strongly dignified (Exaltation, Own Sign, strong Nakshatra like Rohini/Pushya/Shravana) and well-aspected. Explicitly state if the Moon's immediate strength appears capable of temporarily driving price action, potentially even counter to the underlying stress indicated by slower afflicted planets.
+Mercury Rx + Neptune = False Open
 
-Balancing Act:
+Jupiter in 12H (D1 + D10 + D16) = No institutional support
 
-Evaluate if powerful immediate positives (e.g., Exalted Moon in Rohini in 11th) can realistically create a bullish daily outcome despite significant background negatives (Mercury/Venus Rx/Deb). Acknowledge the tension between immediate sentiment (Moon) and underlying fragility (Rx planets).
+Pluto ☐ Neptune = Sentiment Disintegration
 
-Is the picture one where strong positive drivers overcome weak negatives? Or strong negatives overwhelm weak positives? Or, crucially, is it a conflict between strong immediate positives and strong background negatives, suggesting a day prone to strong trends but with high underlying reversal risk?
+🧬 ASC Diagnostics Module (NEW)
+ASC Degree < 7° → Bias Instability Flag
 
-Dominant Theme: Explicitly state if the dominant theme appears to be Directional Strength (Bullish/Bearish), Directional Conflict (Mixed/Choppy), or Overriding Volatility/Unpredictability (Volatile-Positive, Volatile-Negative, Chaotic).
+ASC Lord in Rx, debility, or Dusthana = downgrade
 
-Conclusion:
+ASC in Dusthana Bhava = Opening Weakness
 
-Daily Bias & Volatility: Provide a clear Daily Bias (e.g., Bullish, Bearish, Mixed-Bullish, Mixed-Bearish, Volatile-Bullish, Volatile-Bearish, Highly Volatile with Reversal Risk, Neutral-Volatile).
+ASC Nakshatra Lord in Gandanta or Rx = Instability Override
 
-Expected Price Action: Explicitly describe the expected character of the market movement:
+📛 Bhava Sandhi Saturation Rule (NEW)
+If 3 or more key planets (☉ ☽ ☿ ♀) are within 7° of Bhava Cusp = Sentiment Drift / Non-confirmation
 
-Sustained trend (strong up/down)?
+Override any bullish forecast unless ASC lord is dignified
 
-Choppy / Range-bound?
+🧠 Speed + Rx Volatility Engine
+Pattern	Effect
+Moon Fast + Dusthana	Volatility Collapse
+Venus/Saturn Slow + Weak D9	Persistent Downtrend
+Mercury Rx + Neptune + MC	False Open → Breakdown
+Mars in Dusthana (D16)	Intraday Volatility Spike
+Jupiter afflicted + 12H (multi-varga)	Institutional Retreat
+🔁 Reversal Matrix (V3.0 – Enhanced)
+Signal Stack	Trigger
+Venus Rx + D9 Debilitated + Neptune	Trap Rally
+Mercury Rx + Neptune + MC / Sandhi	False Open
+Moon in Dusthana Nakshatra + Hard Aspect	Sentiment Collapse
+≥2 Planets Scoring –2 (same Bhava D9/D16)	Structural Fragility
+Jupiter in 12H (D1 + D10 + D16)	Institutional Pullout
+ASC <7° + Lord Rx/Combust	Weak Open
+Pluto ☐ Neptune or Neptune conj Rx planet stack	Sentiment Drain/Fake Rally
+🕰️ Intraday Timing Stack (V3.0)
+Trigger Type	Timeframe Effect
+Planet near Bhava cusp (±1°, 4°, 7°)	Sentiment Reversal or Ignition
+Moon/ASC/MC Cross	Emotional Shift / Spike
+Venus/Mercury in 3H/6H/10H/11H	Volume / Trend Breakouts
+Sandhi Proximity	Weak Drift or Failure
+Overlay with Hora Timing if available to pin reversal zones.
 
-Volatile with sharp swings in both directions (Whipsaws)?
+🎯 Bias Output Labels
+Bullish Continuation
 
-Initial strength followed by reversal? Initial weakness followed by reversal?
+Opening Strength → Reversal
 
-Prone to unexpected gaps or news-driven jumps?
+Opening Strength → Fade
 
-Concise Justification: Explicitly reference the dominant weighted factors and the interplay between them (e.g., "Strong immediate bullish sentiment from exalted Moon in Rohini likely drives initial gains, but the background fragility from Mercury/Venus Rx+Deb creates high risk of volatility and potential afternoon reversal," OR "The severe affliction of Mercury/Venus Rx+Deb overwhelms other factors, suggesting high volatility and likely negative pressure despite...") Explain why these factors lead to the specific bias and volatility assessment.
+Bearish From Open
+
+Bearish Drift
+
+Rangebound Volatile
+
+Volatile Chop w/ Bias (↑ or ↓)
+
+Institutional Drain → Trap Rally
+
+False Open → Breakdown
+
+📊 Price Action Grid
+Segment	Labels
+Open	Bullish / Flat / Weak / Volatile
+Midday	Acceleration / Reversal / Sideways
+Close	Rally / Fade / Breakdown / Drift
+✅ Justification Checklist
+D1–D9–D16 resonance
+
+Multi-varga Bhava overlays (especially Dusthana)
+
+D9 Fragility Score + Cluster Trigger
+
+Sandhi Saturation Flag
+
+ASC Diagnostics (degree, Nakshatra, Lord condition)
+
+House Lord dignity audit (Transit + Natal ruler)
+
+Nakshatra Reversal Weight scoring
+
+Aspect Matrix hits (T–N + T–T)
+
+Moon/Neptune/Venus Rx clusters
+
+Hora Timing + Bhava Cusp overlays
+
 
 NAKSHATRA_BOUNDARIES = [
     {"Name": "Ashwini", "Start": 0.0, "End": 13.3333, "Ruler": "Ketu", "Weight": 1.3, "Trend": "Bullish"},
@@ -146,6 +227,42 @@ NAKSHATRA_BOUNDARIES = [
     {"Name": "Revati", "Start": 346.6667, "End": 360.0, "Ruler": "Mercury", "Weight": 1.3, "Trend": "Bullish"}
 ]
 
+============
+Bhava Chart
+============
+Ascendant : 202.13109833232454	Midheaven : 122.11448895784653	Ayanamsa : -23.25887396553611
+Bhava Madhya
+
+House	Sign	Degree	Norm Degree
+1	Libra	202.13109833232454	22.13109833232454
+2	Scorpio	235.45889520749853	25.45889520749853
+3	Sagittarius	268.7866920826725	28.786692082672516
+4	Aquarius	302.11448895784656	2.114488957846561
+5	Aquarius	328.7866920826725	28.786692082672516
+6	Pisces	355.45889520749853	25.45889520749853
+7	Aries	22.13109833232454	22.13109833232454
+8	Taurus	55.45889520749853	25.45889520749853
+9	Gemini	88.78669208267252	28.786692082672516
+10	Leo	122.11448895784656	2.114488957846561
+11	Leo	148.78669208267254	28.786692082672545
+12	Virgo	175.45889520749853	25.45889520749853
+=============
+Bhava Sandhi
+=============
+
+House	Sign	Degree	Norm Degree
+1	Scorpio	218.79499676991156	8.794996769911563
+2	Sagittarius	252.12279364508555	12.122793645085551
+3	Capricorn	285.45059052025954	15.450590520259539
+4	Aquarius	315.45059052025954	15.450590520259539
+5	Pisces	342.12279364508555	12.122793645085551
+6	Aries	8.794996769911563	8.794996769911563
+7	Taurus	38.79499676991156	8.794996769911563
+8	Gemini	72.12279364508555	12.122793645085551
+9	Cancer	105.45059052025954	15.450590520259539
+10	Leo	135.45059052025954	15.450590520259539
+11	Virgo	162.12279364508555	12.122793645085551
+12	Libra	188.79499676991153	8.794996769911535
 
 ==============================
    NATAL SHADBALA TABLE
@@ -342,15 +459,84 @@ Meena	2	3	1	4	0	5	3	18
 Total	48	49	54	52	39	56	39	337
 
 
+--- ASTROLOGICAL ANALYSIS SCRIPT ---
+Natal: S&P500 (4-3-1957 9:30)
+Transit: Transit Chart (Mar 28, 2025) (28-3-2025 9:30)
+Location: New York, US (America/New_York)
+Settings: Sidereal (LAHIRI), Sripathi Houses
+----------------------------------------
 Calculating UTC times...
+Natal UTC: 1957-03-04 14:30:00+00:00
+Transit UTC: 2025-03-28 13:30:00+00:00
 
 Creating AstrologicalSubject instances...
 - Successfully created: S&P500
-- Successfully created: Transit Chart (Apr 3, 2025)
+- Successfully created: Transit Chart (Mar 28, 2025)
+
+--- Debugging Natal Cusps (Sripathi System) ---
+House   Attr            Sign  Position   SignPos (AbsLon)   Calc SignPos    Status
+-------------------------------------------------------------------------------------
+1       first_house     Gem   25.1017    MISSING/None       85.1017         WORKAROUND
+2       second_house    Can   25.1017    MISSING/None       115.1017        WORKAROUND
+3       third_house     Leo   20.7460    MISSING/None       140.7460        WORKAROUND
+4       fourth_house    Vir   16.3903    MISSING/None       166.3903        WORKAROUND
+5       fifth_house     Lib   16.3903    MISSING/None       196.3903        WORKAROUND
+6       sixth_house     Sco   20.7460    MISSING/None       230.7460        WORKAROUND
+7       seventh_house   Sag   25.1017    MISSING/None       265.1017        WORKAROUND
+8       eighth_house    Cap   25.1017    MISSING/None       295.1017        WORKAROUND
+9       ninth_house     Aqu   20.7460    MISSING/None       320.7460        WORKAROUND
+10      tenth_house     Pis   16.3903    MISSING/None       346.3903        WORKAROUND
+11      eleventh_house  Ari   16.3903    MISSING/None       16.3903         WORKAROUND
+12      twelfth_house   Tau   20.7460    MISSING/None       50.7460         WORKAROUND
+-------------------------------------------------------------------------------------
+Summary: Direct sign_pos available for 0/12 cusps.
+Summary: Fallback calculation possible for 12/12 cusps (where direct sign_pos was missing).
+--> House placement calculation SHOULD be possible.
+
+--- Debugging Transit Cusps (Sripathi System) ---
+House   Attr            Sign  Position   SignPos (AbsLon)   Calc SignPos    Status
+-------------------------------------------------------------------------------------
+1       first_house     Gem   19.2114    MISSING/None       79.2114         WORKAROUND
+2       second_house    Can   19.2114    MISSING/None       109.2114        WORKAROUND
+3       third_house     Leo   14.3025    MISSING/None       134.3025        WORKAROUND
+4       fourth_house    Vir   9.3937     MISSING/None       159.3937        WORKAROUND
+5       fifth_house     Lib   9.3937     MISSING/None       189.3937        WORKAROUND
+6       sixth_house     Sco   14.3025    MISSING/None       224.3025        WORKAROUND
+7       seventh_house   Sag   19.2114    MISSING/None       259.2114        WORKAROUND
+8       eighth_house    Cap   19.2114    MISSING/None       289.2114        WORKAROUND
+9       ninth_house     Aqu   14.3025    MISSING/None       314.3025        WORKAROUND
+10      tenth_house     Pis   9.3937     MISSING/None       339.3937        WORKAROUND
+11      eleventh_house  Ari   9.3937     MISSING/None       9.3937          WORKAROUND
+12      twelfth_house   Tau   14.3025    MISSING/None       44.3025         WORKAROUND
+-------------------------------------------------------------------------------------
+Summary: Direct sign_pos available for 0/12 cusps.
+Summary: Fallback calculation possible for 12/12 cusps (where direct sign_pos was missing).
+--> House placement calculation SHOULD be possible.
+
+Calculating Transit Planetary Speeds...
 
 ==============================
-   STANDARD NATAL CHART REPORT: S&P500
-   (Using Sripathi Houses, LAHIRI Ayanamsa)
+      TRANSIT PLANETARY SPEEDS
+==============================
+Planet       Speed (°/day)   Status      Classification 
+------------------------------------------------------------
+Sun          +0.9890         Direct      Normal         
+Moon         +15.0493        Direct      Very Fast      
+Mercury      -0.7786         Retrograde  Normal         
+Venus        -0.5466         Retrograde  Slow           
+Mars         +0.3094         Direct      Slow           
+Jupiter      +0.1493         Direct      Normal         
+Saturn       +0.1209         Direct      Fast           
+Uranus       +0.0443         Direct      Normal         
+Neptune      +0.0376         Direct      Normal         
+Pluto        +0.0167         Direct      Normal         
+True Node    -0.0068         Retrograde  Slow           
+True S. Node -0.0068         Retrograde  Slow           
+------------------------------------------------------------
+
+==============================
+   NATAL CHART: S&P500
+   (Sripathi Houses, LAHIRI Ayanamsa)
 ==============================
 
 +- Kerykeion report for S&P500 -+
@@ -401,7 +587,24 @@ Creating AstrologicalSubject instances...
 +----------------+------+----------+
 ----------------------------------------------------------------------
 
---- Natal Nakshatra Positions (Method: User Boundaries / User Pada Logic) ---
+--- Natal House Lords (Sripathi System) ---
+House        Cusp Sign  House Lord
+----------------------------------
+First        Gem        Mercury   
+Second       Can        Moon      
+Third        Leo        Sun       
+Fourth       Vir        Mercury   
+Fifth        Lib        Venus     
+Sixth        Sco        Mars      
+Seventh      Sag        Jupiter   
+Eighth       Cap        Saturn    
+Ninth        Aqu        Saturn    
+Tenth        Pis        Jupiter   
+Eleventh     Ari        Mars      
+Twelfth      Tau        Venus     
+----------------------------------
+
+--- Natal Nakshatra Positions ---
 Ascendant   : Pushya          (Pada 3, Lord: Saturn  ) [Can 12.28°]
 MC          : Point data unavailable.
 Sun         : Purva Bhadrapada (Pada 1, Lord: Jupiter ) [Aqu 20.71°]
@@ -418,166 +621,335 @@ True Node   : Vishakha        (Pada 3, Lord: Jupiter ) [Lib 28.62° (R)]
 True S. Node: Krittika        (Pada 1, Lord: Sun     ) [Ari 28.62° (R)]
 ---------------------------------------------------------------------------
 
+==================== ALL DIVISIONAL CHARTS: NATAL ====================
+
+--- NATAL DREKKANA (D3) CHART: ⚡ Momentum Initiator ---
+Point        Rasi Sign  House  Lord       Dignity        Varga Sign     Pada 
+--------------------------------------------------------------------------------
+Ascendant    Can        1      Mercury    N/A            Sco            2     
+MC          : Data unavailable
+Sun          Aqu        8      Saturn     None           Lib            3     
+Moon         Pis        10     Jupiter    None           Sco            3     
+Mercury      Aqu        8      Saturn     None           Aqu            1     
+Venus        Aqu        8      Saturn     None           Gem            2     
+Mars         Ari        11     Mars       None           Sag            3     
+Jupiter      Vir        3      Sun        None           Vir            1      (R)
+Saturn       Sco        5      Venus      None           Can            3     
+Uranus       Can        1      Mercury    None           Sco            2      (R)
+Neptune      Lib        4      Mercury    None           Lib            1      (R)
+Pluto        Leo        2      Moon       None           Leo            1      (R)
+True Node    Lib        5      Venus      N/A            Gem            3      (R)
+True S. Node Ari        11     Mars       N/A            Sag            3      (R)
+--------------------------------------------------------------------------------
+
+--- NATAL SAPTAMSA (D7) CHART: 📈 Growth & Expansion ---
+Point        Rasi Sign  House  Lord       Dignity        Varga Sign     Pada 
+--------------------------------------------------------------------------------
+Ascendant    Can        1      Mercury    N/A            Pis            3     
+MC          : Data unavailable
+Sun          Aqu        8      Saturn     None           Gem            5     
+Moon         Pis        10     Jupiter    None           Aqu            6     
+Mercury      Aqu        8      Saturn     None           Pis            2     
+Venus        Aqu        8      Saturn     None           Ari            3     
+Mars         Ari        11     Mars       None           Lib            7     
+Jupiter      Vir        3      Sun        None           Ari            2      (R)
+Saturn       Sco        5      Venus      None           Vir            5     
+Uranus       Can        1      Mercury    None           Pis            3      (R)
+Neptune      Lib        4      Mercury    None           Sag            3      (R)
+Pluto        Leo        2      Moon       None           Vir            2      (R)
+True Node    Lib        5      Venus      N/A            Ari            7      (R)
+True S. Node Ari        11     Mars       N/A            Lib            7      (R)
+--------------------------------------------------------------------------------
+
+--- NATAL NAVAMSA (D9) CHART: 🤝 Relationship & Dharma ---
+Point        Rasi Sign  House  Lord       Dignity        Varga Sign     Pada 
+--------------------------------------------------------------------------------
+Ascendant    Can        1      Mercury    N/A            Can            4     
+MC          : Data unavailable
+Sun          Aqu        8      Saturn     None           Gem            7     
+Moon         Pis        10     Jupiter    None           Pis            8     
+Mercury      Aqu        8      Saturn     None           Aqu            3     
+Venus        Aqu        8      Saturn     None           Pis            4     
+Mars         Ari        11     Mars       None           Sag            9     
+Jupiter      Vir        3      Sun        None           Vir            2      (R)
+Saturn       Sco        5      Venus      None           Gem            7     
+Uranus       Can        1      Mercury    None           Can            4      (R)
+Neptune      Lib        4      Mercury    None           Gem            3      (R)
+Pluto        Leo        2      Moon       None           Cap            2      (R)
+True Node    Lib        5      Venus      N/A            Sag            9      (R)
+True S. Node Ari        11     Mars       N/A            Sag            9      (R)
+--------------------------------------------------------------------------------
+
+--- NATAL DASAMSA (D10) CHART: 🏛️ Institutional Power ---
+Point        Rasi Sign  House  Lord       Dignity        Varga Sign     Pada 
+--------------------------------------------------------------------------------
+Ascendant    Can        1      Mercury    N/A            Can            5     
+MC          : Data unavailable
+Sun          Aqu        8      Saturn     None           Leo            7     
+Moon         Pis        10     Jupiter    None           Can            9     
+Mercury      Aqu        8      Saturn     None           Ari            3     
+Venus        Aqu        8      Saturn     None           Tau            4     
+Mars         Ari        11     Mars       None           Cap            10    
+Jupiter      Vir        3      Sun        None           Gem            2      (R)
+Saturn       Sco        5      Venus      None           Cap            7     
+Uranus       Can        1      Mercury    None           Gem            4      (R)
+Neptune      Lib        4      Mercury    None           Cap            4      (R)
+Pluto        Leo        2      Moon       None           Vir            2      (R)
+True Node    Lib        5      Venus      N/A            Can            10     (R)
+True S. Node Ari        11     Mars       N/A            Cap            10     (R)
+--------------------------------------------------------------------------------
+
+--- NATAL SHODASAMSA (D16) CHART: 🌊 Technical Flow & Volatility ---
+Point        Rasi Sign  House  Lord       Dignity        Varga Sign     Pada 
+--------------------------------------------------------------------------------
+Ascendant    Can        1      Mercury    N/A            Lib            7     
+MC          : Data unavailable
+Sun          Aqu        8      Saturn     None           Can            12    
+Moon         Pis        10     Jupiter    None           Cap            14    
+Mercury      Aqu        8      Saturn     None           Sco            4     
+Venus        Aqu        8      Saturn     None           Cap            6     
+Mars         Ari        11     Mars       None           Can            16    
+Jupiter      Vir        3      Sun        None           Aqu            3      (R)
+Saturn       Sco        5      Venus      None           Can            12    
+Uranus       Can        1      Mercury    None           Vir            6      (R)
+Neptune      Lib        4      Mercury    None           Leo            5      (R)
+Pluto        Leo        2      Moon       None           Lib            3      (R)
+True Node    Lib        5      Venus      N/A            Can            16     (R)
+True S. Node Ari        11     Mars       N/A            Can            16     (R)
+--------------------------------------------------------------------------------
+
+==================== END DIVISIONAL CHARTS: NATAL ====================
+
 ==============================
-   STANDARD TRANSIT CHART REPORT: Transit Chart (Apr 3, 2025)
-   (Using Sripathi Houses, LAHIRI Ayanamsa)
+   TRANSIT CHART: Transit Chart (Mar 28, 2025)
+   (Sripathi Houses, LAHIRI Ayanamsa)
 ==============================
 
-+- Kerykeion report for Transit Chart (Apr 3, 2025) -+
-+----------+-------+--------------+-----------+----------+
-| Date     | Time  | Location     | Longitude | Latitude |
-+----------+-------+--------------+-----------+----------+
-| 3/4/2025 | 13:30 | New York, US | -74.006   | 40.7128  |
-+----------+-------+--------------+-----------+----------+
++- Kerykeion report for Transit Chart (Mar 28, 2025) -+
++-----------+-------+--------------+-----------+----------+
+| Date      | Time  | Location     | Longitude | Latitude |
++-----------+-------+--------------+-----------+----------+
+| 28/3/2025 | 13:30 | New York, US | -74.006   | 40.7128  |
++-----------+-------+--------------+-----------+----------+
 +-----------------+------+-------+------+----------------+
 | Planet          | Sign | Pos.  | Ret. | House          |
 +-----------------+------+-------+------+----------------+
-| Sun             | Pis  | 20.0  | -    | Tenth_House    |
-| Moon            | Gem  | 2.69  | -    | Twelfth_House  |
-| Mercury         | Pis  | 3.26  | R    | Ninth_House    |
-| Venus           | Pis  | 2.17  | R    | Ninth_House    |
-| Mars            | Can  | 0.3   | -    | First_House    |
-| Jupiter         | Tau  | 22.2  | -    | Twelfth_House  |
-| Saturn          | Pis  | 0.61  | -    | Ninth_House    |
-| Uranus          | Tau  | 0.67  | -    | Eleventh_House |
-| Neptune         | Pis  | 5.95  | -    | Ninth_House    |
-| Pluto           | Cap  | 9.38  | -    | Seventh_House  |
-| Mean_Node       | Pis  | 2.38  | R    | Ninth_House    |
-| True_Node       | Pis  | 3.09  | R    | Ninth_House    |
-| Mean_South_Node | Vir  | 2.38  | R    | Third_House    |
-| True_South_Node | Vir  | 3.09  | R    | Third_House    |
-| Chiron          | Pis  | 28.25 | -    | Tenth_House    |
-| Mean_Lilith     | Lib  | 6.65  | -    | Fourth_House   |
-| Ascendant       | Can  | 11.34 | -    | First_House    |
-| Descendant      | Cap  | 11.34 | -    | Seventh_House  |
-| Medium_Coeli    | Pis  | 28.27 | -    | Tenth_House    |
-| Imum_Coeli      | Vir  | 28.27 | -    | Fourth_House   |
+| Sun             | Pis  | 14.07 | -    | Tenth_House    |
+| Moon            | Pis  | 3.84  | -    | Ninth_House    |
+| Mercury         | Pis  | 6.84  | R    | Ninth_House    |
+| Venus           | Pis  | 5.01  | R    | Ninth_House    |
+| Mars            | Gem  | 28.35 | -    | First_House    |
+| Jupiter         | Tau  | 21.27 | -    | Twelfth_House  |
+| Saturn          | Aqu  | 29.89 | -    | Ninth_House    |
+| Uranus          | Tau  | 0.4   | -    | Eleventh_House |
+| Neptune         | Pis  | 5.72  | -    | Ninth_House    |
+| Pluto           | Cap  | 9.29  | -    | Seventh_House  |
+| Mean_Node       | Pis  | 2.7   | R    | Ninth_House    |
+| True_Node       | Pis  | 3.22  | R    | Ninth_House    |
+| Mean_South_Node | Vir  | 2.7   | R    | Third_House    |
+| True_South_Node | Vir  | 3.22  | R    | Third_House    |
+| Chiron          | Pis  | 27.9  | -    | Tenth_House    |
+| Mean_Lilith     | Lib  | 5.98  | -    | Fourth_House   |
+| Ascendant       | Can  | 6.67  | -    | First_House    |
+| Descendant      | Cap  | 6.67  | -    | Seventh_House  |
+| Medium_Coeli    | Pis  | 21.94 | -    | Tenth_House    |
+| Imum_Coeli      | Vir  | 21.94 | -    | Fourth_House   |
 +-----------------+------+-------+------+----------------+
 +----------------+------+----------+
 | House          | Sign | Position |
 +----------------+------+----------+
-| First_House    | Gem  | 24.16    |
-| Second_House   | Can  | 24.16    |
-| Third_House    | Leo  | 19.8     |
-| Fourth_House   | Vir  | 15.45    |
-| Fifth_House    | Lib  | 15.45    |
-| Sixth_House    | Sco  | 19.8     |
-| Seventh_House  | Sag  | 24.16    |
-| Eighth_House   | Cap  | 24.16    |
-| Ninth_House    | Aqu  | 19.8     |
-| Tenth_House    | Pis  | 15.45    |
-| Eleventh_House | Ari  | 15.45    |
-| Twelfth_House  | Tau  | 19.8     |
+| First_House    | Gem  | 19.21    |
+| Second_House   | Can  | 19.21    |
+| Third_House    | Leo  | 14.3     |
+| Fourth_House   | Vir  | 9.39     |
+| Fifth_House    | Lib  | 9.39     |
+| Sixth_House    | Sco  | 14.3     |
+| Seventh_House  | Sag  | 19.21    |
+| Eighth_House   | Cap  | 19.21    |
+| Ninth_House    | Aqu  | 14.3     |
+| Tenth_House    | Pis  | 9.39     |
+| Eleventh_House | Ari  | 9.39     |
+| Twelfth_House  | Tau  | 14.3     |
 +----------------+------+----------+
 ----------------------------------------------------------------------
 
---- Transit Nakshatra Positions (Method: User Boundaries / User Pada Logic) ---
-Ascendant   : Pushya          (Pada 3, Lord: Saturn  ) [Can 11.34°]
+--- Transit House Lords (Sripathi System) ---
+House        Cusp Sign  House Lord
+----------------------------------
+First        Gem        Mercury   
+Second       Can        Moon      
+Third        Leo        Sun       
+Fourth       Vir        Mercury   
+Fifth        Lib        Venus     
+Sixth        Sco        Mars      
+Seventh      Sag        Jupiter   
+Eighth       Cap        Saturn    
+Ninth        Aqu        Saturn    
+Tenth        Pis        Jupiter   
+Eleventh     Ari        Mars      
+Twelfth      Tau        Venus     
+----------------------------------
+
+--- Transit Nakshatra Positions ---
+Ascendant   : Pushya          (Pada 1, Lord: Saturn  ) [Can 6.67°]
 MC          : Point data unavailable.
-Sun         : Revati          (Pada 1, Lord: Mercury ) [Pis 20.00°]
-Moon        : Mrigashira      (Pada 3, Lord: Mars    ) [Gem 2.69°]
-Mercury     : Purva Bhadrapada (Pada 4, Lord: Jupiter ) [Pis 3.26° (R)]
-Venus       : Purva Bhadrapada (Pada 4, Lord: Jupiter ) [Pis 2.17° (R)]
-Mars        : Punarvasu       (Pada 4, Lord: Jupiter ) [Can 0.30°]
-Jupiter     : Rohini          (Pada 4, Lord: Moon    ) [Tau 22.20°]
-Saturn      : Purva Bhadrapada (Pada 4, Lord: Jupiter ) [Pis 0.61°]
-Uranus      : Krittika        (Pada 2, Lord: Sun     ) [Tau 0.67°]
-Neptune     : Uttara Bhadrapada (Pada 1, Lord: Saturn  ) [Pis 5.95°]
-Pluto       : Uttara Ashadha  (Pada 4, Lord: Sun     ) [Cap 9.38°]
-True Node   : Purva Bhadrapada (Pada 4, Lord: Jupiter ) [Pis 3.09° (R)]
-True S. Node: Uttara Phalguni (Pada 2, Lord: Sun     ) [Vir 3.09° (R)]
+Sun         : Uttara Bhadrapada (Pada 4, Lord: Saturn  ) [Pis 14.07°]
+Moon        : Uttara Bhadrapada (Pada 1, Lord: Saturn  ) [Pis 3.84°]
+Mercury     : Uttara Bhadrapada (Pada 2, Lord: Saturn  ) [Pis 6.84° (R)]
+Venus       : Uttara Bhadrapada (Pada 1, Lord: Saturn  ) [Pis 5.01° (R)]
+Mars        : Punarvasu       (Pada 3, Lord: Jupiter ) [Gem 28.35°]
+Jupiter     : Rohini          (Pada 4, Lord: Moon    ) [Tau 21.27°]
+Saturn      : Purva Bhadrapada (Pada 3, Lord: Jupiter ) [Aqu 29.89°]
+Uranus      : Krittika        (Pada 2, Lord: Sun     ) [Tau 0.40°]
+Neptune     : Uttara Bhadrapada (Pada 1, Lord: Saturn  ) [Pis 5.72°]
+Pluto       : Uttara Ashadha  (Pada 4, Lord: Sun     ) [Cap 9.29°]
+True Node   : Purva Bhadrapada (Pada 4, Lord: Jupiter ) [Pis 3.22° (R)]
+True S. Node: Uttara Phalguni (Pada 2, Lord: Sun     ) [Vir 3.22° (R)]
 ---------------------------------------------------------------------------
 
-==============================
-   DERIVED HOUSE LORDS
-(Based on Standard Report Cusps)
-==============================
+==================== ALL DIVISIONAL CHARTS: TRANSIT ====================
 
---- Natal House Lords ---
-House        Cusp Sign  House Lord
-----------------------------------
-First        Gem        Mercury   
-Second       Can        Moon      
-Third        Leo        Sun       
-Fourth       Vir        Mercury   
-Fifth        Lib        Venus     
-Sixth        Sco        Mars      
-Seventh      Sag        Jupiter   
-Eighth       Cap        Saturn    
-Ninth        Aqu        Saturn    
-Tenth        Pis        Jupiter   
-Eleventh     Ari        Mars      
-Twelfth      Tau        Venus     
-----------------------------------
+--- TRANSIT DREKKANA (D3) CHART: ⚡ Momentum Initiator ---
+Point        Rasi Sign  House  Lord       Dignity        Varga Sign     Pada 
+--------------------------------------------------------------------------------
+Ascendant    Can        1      Mercury    N/A            Can            1     
+MC          : Data unavailable
+Sun          Pis        10     Jupiter    None           Can            2     
+Moon         Pis        9      Saturn     None           Pis            1     
+Mercury      Pis        9      Saturn     None           Pis            1      (R)
+Venus        Pis        9      Saturn     None           Pis            1      (R)
+Mars         Gem        1      Mercury    None           Aqu            3     
+Jupiter      Tau        12     Venus      None           Cap            3     
+Saturn       Aqu        9      Saturn     None           Lib            3     
+Uranus       Tau        11     Mars       None           Tau            1     
+Neptune      Pis        9      Saturn     None           Pis            1     
+Pluto        Cap        7      Jupiter    None           Cap            1     
+True Node    Pis        9      Saturn     N/A            Pis            1      (R)
+True S. Node Vir        3      Sun        N/A            Vir            1      (R)
+--------------------------------------------------------------------------------
 
---- Transit House Lords ---
-House        Cusp Sign  House Lord
-----------------------------------
-First        Gem        Mercury   
-Second       Can        Moon      
-Third        Leo        Sun       
-Fourth       Vir        Mercury   
-Fifth        Lib        Venus     
-Sixth        Sco        Mars      
-Seventh      Sag        Jupiter   
-Eighth       Cap        Saturn    
-Ninth        Aqu        Saturn    
-Tenth        Pis        Jupiter   
-Eleventh     Ari        Mars      
-Twelfth      Tau        Venus     
-----------------------------------
-==============================
+--- TRANSIT SAPTAMSA (D7) CHART: 📈 Growth & Expansion ---
+Point        Rasi Sign  House  Lord       Dignity        Varga Sign     Pada 
+--------------------------------------------------------------------------------
+Ascendant    Can        1      Mercury    N/A            Aqu            2     
+MC          : Data unavailable
+Sun          Pis        10     Jupiter    None           Sag            4     
+Moon         Pis        9      Saturn     None           Vir            1     
+Mercury      Pis        9      Saturn     None           Lib            2      (R)
+Venus        Pis        9      Saturn     None           Lib            2      (R)
+Mars         Gem        1      Mercury    None           Sag            7     
+Jupiter      Tau        12     Venus      None           Pis            5     
+Saturn       Aqu        9      Saturn     None           Leo            7     
+Uranus       Tau        11     Mars       None           Sco            1     
+Neptune      Pis        9      Saturn     None           Lib            2     
+Pluto        Cap        7      Jupiter    None           Vir            3     
+True Node    Pis        9      Saturn     N/A            Vir            1      (R)
+True S. Node Vir        3      Sun        N/A            Pis            1      (R)
+--------------------------------------------------------------------------------
+
+--- TRANSIT NAVAMSA (D9) CHART: 🤝 Relationship & Dharma ---
+Point        Rasi Sign  House  Lord       Dignity        Varga Sign     Pada 
+--------------------------------------------------------------------------------
+Ascendant    Can        1      Mercury    N/A            Tau            2     
+MC          : Data unavailable
+Sun          Pis        10     Jupiter    None           Sag            5     
+Moon         Pis        9      Saturn     None           Vir            2     
+Mercury      Pis        9      Saturn     None           Lib            3      (R)
+Venus        Pis        9      Saturn     None           Vir            2      (R)
+Mars         Gem        1      Mercury    None           Ari            9     
+Jupiter      Tau        12     Venus      None           Gem            7     
+Saturn       Aqu        9      Saturn     None           Leo            9     
+Uranus       Tau        11     Mars       None           Sag            1     
+Neptune      Pis        9      Saturn     None           Vir            2     
+Pluto        Cap        7      Jupiter    None           Gem            3     
+True Node    Pis        9      Saturn     N/A            Leo            1      (R)
+True S. Node Vir        3      Sun        N/A            Leo            1      (R)
+--------------------------------------------------------------------------------
+
+--- TRANSIT DASAMSA (D10) CHART: 🏛️ Institutional Power ---
+Point        Rasi Sign  House  Lord       Dignity        Varga Sign     Pada 
+--------------------------------------------------------------------------------
+Ascendant    Can        1      Mercury    N/A            Tau            3     
+MC          : Data unavailable
+Sun          Pis        10     Jupiter    None           Pis            5     
+Moon         Pis        9      Saturn     None           Sag            2     
+Mercury      Pis        9      Saturn     None           Cap            3      (R)
+Venus        Pis        9      Saturn     None           Sag            2      (R)
+Mars         Gem        1      Mercury    None           Pis            10    
+Jupiter      Tau        12     Venus      None           Leo            8     
+Saturn       Aqu        9      Saturn     None           Sco            10    
+Uranus       Tau        11     Mars       None           Cap            1     
+Neptune      Pis        9      Saturn     None           Sag            2     
+Pluto        Cap        7      Jupiter    None           Sag            4     
+True Node    Pis        9      Saturn     N/A            Sag            2      (R)
+True S. Node Vir        3      Sun        N/A            Gem            2      (R)
+--------------------------------------------------------------------------------
+
+--- TRANSIT SHODASAMSA (D16) CHART: 🌊 Technical Flow & Volatility ---
+Point        Rasi Sign  House  Lord       Dignity        Varga Sign     Pada 
+--------------------------------------------------------------------------------
+Ascendant    Can        1      Mercury    N/A            Can            4     
+MC          : Data unavailable
+Sun          Pis        10     Jupiter    None           Can            8     
+Moon         Pis        9      Saturn     None           Aqu            3     
+Mercury      Pis        9      Saturn     None           Pis            4      (R)
+Venus        Pis        9      Saturn     None           Aqu            3      (R)
+Mars         Gem        1      Mercury    None           Pis            16    
+Jupiter      Tau        12     Venus      None           Can            12    
+Saturn       Aqu        9      Saturn     None           Sco            16    
+Uranus       Tau        11     Mars       None           Leo            1     
+Neptune      Pis        9      Saturn     None           Pis            4     
+Pluto        Cap        7      Jupiter    None           Leo            5     
+True Node    Pis        9      Saturn     N/A            Cap            2      (R)
+True S. Node Vir        3      Sun        N/A            Cap            2      (R)
+--------------------------------------------------------------------------------
+
+==================== END DIVISIONAL CHARTS: TRANSIT ====================
 
 ==============================
-   TRANSIT ASPECTS TO NATAL (Using Custom Speed Calc + Timing)
+   TRANSIT ASPECTS TO NATAL
    (Max Orb: 5.0°, Aspects: [0, 60, 90, 120, 180])
 ==============================
 
-==============================
-      TRANSIT PLANETARY SPEEDS
-==============================
-Planet       Speed (°/day)   Status   Classification 
--------------------------------------------------------
-Sun          +0.9853                  Normal         
-Moon         +13.7380                 Fast           
-Mercury      -0.2992                  Slow Rx        
-Venus        -0.3542                  Slow Rx        
-Mars         +0.3458                  Slow           
-Jupiter      +0.1610                  Fast           
-Saturn       +0.1187                  Fast           
-Uranus       +0.0474                  Normal         
-Neptune      +0.0369                  Normal         
-Pluto        +0.0141                  Normal         
-True Node    -0.0152                  Slow Rx        
-True S. Node -0.0152                  Slow Rx        
--------------------------------------------------------
-
 Transit Planet  Aspect     Natal Planet    Orb     Status     Est. Exact     
 ---------------------------------------------------------------------------
-Pluto           Square     Neptune         0.29°   Separating 03/13 12:00 EDT
-Neptune         Opposite   Jupiter         0.68°   Separating 03/15 22:40 EDT
-Sun             Trine      Saturn          0.74°   Applying   04/04 03:33 EDT
-Pluto           Opposite   Uranus          0.79°   Applying   05/29 12:46 EDT
-Ascendant       Conjunct   Ascendant       0.94°   Applying   N/A (Asc)      
-Ascendant       Conjunct   Uranus          1.16°   Separating N/A (Asc)      
-Jupiter         Opposite   Saturn          1.46°   Separating 03/25 07:51 EDT
-Jupiter         Square     Sun             1.49°   Separating 03/25 03:19 EDT
-Mars            Sextile    Mars            1.77°   Separating 03/29 06:17 EDT
-Saturn          Trine      True Node       1.98°   Separating 03/17 16:47 EDT
-Mercury         Opposite   Jupiter         2.01°   Separating 03/27 16:32 EDT
-Uranus          Opposite   True Node       2.05°   Separating 02/19 02:49 EST
-Uranus          Conjunct   Mars            2.14°   Separating 02/17 03:16 EST
-True Node       Opposite   Jupiter         2.17°   Separating 11/11 16:17 EST
-Pluto           Opposite   Ascendant       2.90°   Applying   10/26 02:25 EDT
-Venus           Opposite   Jupiter         3.10°   Separating 03/25 15:41 EDT
-Jupiter         Sextile    Moon            3.30°   Applying   04/23 21:08 EDT
-Venus           Trine      True Node       3.55°   Applying   04/13 09:43 EDT
-Pluto           Trine      Jupiter         4.12°   Separating 06/14 19:17 EDT
-True Node       Trine      True Node       4.47°   Applying   01/21 11:42 EST
-Moon            Trine      Mercury         4.60°   Applying   17:32 EDT      
-Mercury         Trine      True Node       4.64°   Applying   04/18 21:17 EDT
-Saturn          Opposite   Jupiter         4.66°   Applying   05/12 15:44 EDT
-Mars            Square     Moon            4.81°   Separating 03/20 11:45 EDT
+Pluto           Square     Neptune         0.20°   Separating 03/16 08:48 EDT
+Venus           Opposite   Jupiter         0.26°   Separating 03/27 22:06 EDT
+Neptune         Opposite   Jupiter         0.46°   Separating 03/16 05:09 EDT
+Jupiter         Opposite   Saturn          0.53°   Separating 03/24 19:34 EDT
+Jupiter         Square     Sun             0.56°   Separating 03/24 14:41 EDT
+Pluto           Opposite   Uranus          0.88°   Applying   05/20 09:46 EDT
+Saturn          Trine      True Node       1.26°   Separating 03/17 23:06 EDT
+Moon            Opposite   Jupiter         1.42°   Applying   11:46 EDT      
+Mercury         Opposite   Jupiter         1.57°   Applying   03/30 10:01 EDT
+Uranus          Opposite   True Node       1.78°   Separating 02/16 05:58 EST
+Uranus          Conjunct   Mars            1.87°   Separating 02/14 03:04 EST
+True Node       Opposite   Jupiter         2.05°   Separating 06/02 05:48 EDT
+Mars            Square     Moon            2.86°   Separating 03/19 03:49 EDT
+Pluto           Opposite   Ascendant       2.99°   Applying   09/23 16:38 EDT
+Ascendant       Conjunct   Uranus          3.51°   Fast Moving N/A (Angle)    
+Pluto           Trine      Jupiter         4.02°   Separating 07/29 23:08 EDT
+Jupiter         Sextile    Moon            4.22°   Applying   04/25 16:34 EDT
 ---------------------------------------------------------------------------
 
-Script finished.
+==============================
+   TRANSIT ASPECTS TO TRANSIT (Global Sentiment)
+   (Max Orb: 3.0°, Aspects: [0, 60, 90, 120, 180])
+==============================
+
+Planet 1        Aspect     Planet 2        Orb     Status     Est. Exact     
+---------------------------------------------------------------------------
+Moon            Conjunct   True Node       0.63°   Separating 08:30 EDT      
+Venus           Conjunct   Neptune         0.72°   Separating 03/27 04:02 EDT
+Mercury         Conjunct   Neptune         1.12°   Applying   03/29 18:19 EDT
+Moon            Conjunct   Venus           1.16°   Applying   11:17 EDT      
+Mars            Trine      Saturn          1.53°   Applying   04/05 12:21 EDT
+Venus           Conjunct   True Node       1.79°   Applying   03/31 16:59 EDT
+Mercury         Conjunct   Venus           1.83°   Applying   04/05 07:11 EDT
+Moon            Conjunct   Neptune         1.88°   Applying   12:30 EDT      
+Mars            Sextile    Uranus          2.05°   Applying   04/05 02:36 EDT
+Mercury         Sextile    Pluto           2.45°   Separating 03/25 07:32 EDT
+Neptune         Conjunct   True Node       2.50°   Separating 01/30 22:59 EST
+Uranus          Sextile    True Node       2.82°   Applying   05/22 12:46 EDT
+Moon            Conjunct   Mercury         3.00°   Applying   14:02 EDT      
+---------------------------------------------------------------------------
