@@ -1,5 +1,5 @@
 # DailyBiasGPT
-Daily bias of the S&amp;P500 using vedic astrology
+Daily bias of the S&amp;P500 
 
 
 PIP Install Kerykeion
