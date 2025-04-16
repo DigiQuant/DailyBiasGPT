@@ -1,0 +1,174 @@
+import swisseph as swe
+import datetime
+from tabulate import tabulate
+
+# Transit details
+year, month, day = 2025, 4, 15
+hour, minute = 9, 30
+latitude, longitude = 40.7128, -74.0060  # New York City
+
+# Ashtakavarga benefic points table
+# Format: {planet_index: [list of houses that get a point from this planet/ASC]}
+ashtakavarga_points = {
+    0: [1, 2, 4, 7, 8, 9, 10, 11],  # Sun
+    1: [3, 6, 7, 8, 10, 11],  # Moon
+    2: [1, 2, 4, 7, 8, 10, 11],  # Mars
+    3: [1, 3, 5, 6, 9, 10, 11, 12],  # Mercury
+    4: [1, 2, 4, 5, 7, 9, 10, 11],  # Jupiter
+    5: [1, 2, 3, 4, 5, 8, 9, 10, 11],  # Venus
+    6: [3, 5, 6, 10, 11, 12],  # Saturn
+    7: [1, 3, 4, 6, 7, 10, 11]  # ASC
+}
+
+# Planet names and sign names for output
+planet_names = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "ASC"]
+sign_names = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", 
+              "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"]
+
+# Set ayanamsa to Lahiri
+swe.set_sid_mode(swe.SIDM_LAHIRI)
+
+# Calculate Julian day for transit
+jd = swe.julday(year, month, day, hour + minute/60.0)
+
+# Calculate planet positions - correctly extract the longitude
+planet_positions = {}
+for i in range(7):  # Sun through Saturn
+    # Extract the longitude (first element of the first tuple)
+    result = swe.calc_ut(jd, i, swe.FLG_SIDEREAL)
+    planet_positions[i] = float(result[0][0])
+
+# Calculate Ascendant
+houses_result = swe.houses(jd, latitude, longitude, b'S')  # 'S' for Sripathi house system
+# The first element of houses_result is a tuple with 12 cusps
+# The first cusp [0] is the Ascendant
+planet_positions[7] = float(houses_result[0][0])  # Ascendant position
+
+# Let's check all the planetary positions
+print("Calculated Planetary Positions:")
+for i, name in enumerate(planet_names):
+    print(f"{name}: {planet_positions[i]}")
+print()
+
+# Function to calculate Bhinnashtakavarga for a planet
+def calculate_bhinnashtakavarga(planet_idx):
+    results = [[0 for _ in range(8)] for _ in range(12)]
+    
+    # For each sign (1-12)
+    for sign_idx in range(12):
+        # For each contributing planet/ASC
+        for contrib_idx in range(8):
+            # Get the sign where this contributor is placed
+            contrib_pos = planet_positions[contrib_idx]
+            contrib_sign = int(contrib_pos / 30)
+            
+            # Calculate relative house position from contributor to current sign
+            relative_house = (sign_idx - contrib_sign) % 12 + 1
+            
+            # Check if this relative house gets a point from this contributor
+            if relative_house in ashtakavarga_points[contrib_idx]:
+                results[sign_idx][contrib_idx] = 1
+    
+    return results
+
+# Function to calculate Sarvashtakavarga
+def calculate_sarvashtakavarga():
+    # Initialize results array
+    results = [[0 for _ in range(7)] for _ in range(12)]
+    
+    # For each planet (Sun through Saturn)
+    for planet_idx in range(7):
+        bhinna = calculate_bhinnashtakavarga(planet_idx)
+        
+        # Sum up the points for each sign and store in results
+        for sign_idx in range(12):
+            results[sign_idx][planet_idx] = sum(bhinna[sign_idx])
+    
+    return results
+
+# Print header
+print("="*70)
+print(f"Ashtakavarga for Transit Date: {year}-{month:02d}-{day:02d}")
+print(f"Time: {hour:02d}:{minute:02d} AM")
+print(f"Location: New York, US (America/New_York)")
+print(f"Settings: Sidereal (LAHIRI), Sripathi Houses")
+print("="*70)
+print()
+
+# Display planetary positions for reference
+print("Planetary Positions:")
+for planet_idx, planet_name in enumerate(planet_names):
+    long = planet_positions[planet_idx]
+    sign_idx = int(long / 30)
+    sign_long = long % 30
+    print(f"{planet_name}: {sign_names[sign_idx]} {sign_long:.2f}°")
+print()
+
+# Calculate and display Bhinnashtakavarga for each planet
+for planet_idx in range(7):  # Sun through Saturn
+    planet_name = planet_names[planet_idx]
+    print(f"--- {planet_name} (Bhinnashtaka Varga Breakdown) ---")
+    
+    # Get Bhinnashtakavarga for the current planet
+    bhinna = calculate_bhinnashtakavarga(planet_idx)
+    
+    # Create header for the table
+    headers = ["Sign", "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "ASC", "Total"]
+    
+    # Create table data
+    table_data = []
+    for sign_idx in range(12):
+        row = [sign_names[sign_idx]]
+        row_total = 0
+        for contrib_idx in range(8):
+            contrib = bhinna[sign_idx][contrib_idx]
+            row.append(contrib)
+            row_total += contrib
+        row.append(row_total)
+        table_data.append(row)
+    
+    # Add totals row
+    totals_row = ["Total"]
+    col_totals = []
+    for i in range(8):
+        col_total = sum(row[i+1] for row in table_data)
+        totals_row.append(col_total)
+        col_totals.append(col_total)
+    totals_row.append(sum(col_totals))
+    table_data.append(totals_row)
+    
+    # Display the table
+    print(tabulate(table_data, headers=headers, tablefmt="grid"))
+    print()
+
+# Calculate and display Sarvashtakavarga
+print("--- Sarvashtakavarga Table ---")
+sarva = calculate_sarvashtakavarga()
+
+# Create headers for Sarvashtakavarga table
+sarva_headers = ["Sign", "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Score"]
+
+# Create table data for Sarvashtakavarga
+sarva_table = []
+for sign_idx in range(12):
+    row = [sign_names[sign_idx]]
+    row_total = 0
+    for planet_idx in range(7):
+        row.append(sarva[sign_idx][planet_idx])
+        row_total += sarva[sign_idx][planet_idx]
+    row.append(row_total)
+    sarva_table.append(row)
+
+# Add totals row
+sarva_totals = ["Total"]
+planet_totals = []
+for planet_idx in range(7):
+    col_total = sum(row[planet_idx+1] for row in sarva_table)
+    sarva_totals.append(col_total)
+    planet_totals.append(col_total)
+sarva_totals.append(sum(planet_totals))
+sarva_table.append(sarva_totals)
+
+# Display the Sarvashtakavarga table
+print(tabulate(sarva_table, headers=sarva_headers, tablefmt="grid"))
+print("="*70)
