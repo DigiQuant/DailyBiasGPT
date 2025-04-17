@@ -1,0 +1,502 @@
+import requests
+from bs4 import BeautifulSoup
+import logging
+import sys
+import time
+from typing import Dict, List, Optional, Tuple
+import re
+import datetime  # Import datetime for current date
+
+# --- Configuration ---
+# Get current date and time
+current_datetime = datetime.datetime.now()
+# From successful browser inspection
+TARGET_NAME = "SP"
+TARGET_GENDER = "male"
+TARGET_YEAR = current_datetime.year
+TARGET_MONTH = current_datetime.month
+TARGET_DAY = current_datetime.day
+TARGET_HOUR = 9
+TARGET_MIN = 30
+TARGET_APM = "am"
+TARGET_LOCATION_STRING = "New York City, New York, United States"
+TARGET_LOC_CODE = "5128581"
+
+BASE_URL = "https://www.prokerala.com/astrology/ashtakavarga.php"
+
+# Configure logging (set to WARNING for less noise, INFO or DEBUG for more detail)
+logging.basicConfig(level=logging.WARNING, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# --- Definitions for Parsing and Printing ---
+
+# BAV contributing planets/columns (order from BAV table header)
+CONTRIBUTING_PLANETS = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Ascendant"]
+# Main planets whose BAV is calculated
+MAIN_PLANETS = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
+# SAV contributing planets/columns (order from SAV table header)
+SAV_PLANET_COLUMNS = ["Sun", "Moon", "Mercury", "Venus", "Mars", "Jupiter", "Saturn"]
+# Zodiac signs in expected table order
+ZODIAC_SIGNS = [
+    "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
+    "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+]
+# Map for BAV column headers (can adjust display name if needed)
+COLUMN_HEADER_MAP = {p: p for p in CONTRIBUTING_PLANETS}
+# IDs for the BAV tabs on the webpage
+PLANET_TAB_IDS = {
+    "Sun": "sun-ashtaka-varga-tab",
+    "Moon": "moon-ashtaka-varga-tab",
+    "Mars": "mars-ashtaka-varga-tab",
+    "Mercury": "mercury-ashtaka-varga-tab",
+    "Jupiter": "jupiter-ashtaka-varga-tab",
+    "Venus": "venus-ashtaka-varga-tab",
+    "Saturn": "saturn-ashtaka-varga-tab",
+}
+
+# --- Type Hinting ---
+# BAV: { MainPlanet: { Sign: { Contributor: 1/0, "Total": score }, "Total": { Contributor: total } }, ... }
+BavDetailType = Dict[str, Dict[str, Dict[str, int]]]
+# SAV: { Sign: { Planet/Score: score }, "Total": { Planet/Score: total } }
+SavDetailType = Dict[str, Dict[str, int]]
+
+
+# --- Data Fetching and Parsing Function ---
+
+def get_ashtakavarga_data() -> Optional[Tuple[BavDetailType, SavDetailType]]:
+    """
+    Fetches and parses detailed BAV breakdown and detailed SAV scores.
+
+    Returns:
+        A tuple containing: (bav_details, sav_details)
+        Returns None if fetching or parsing fails significantly.
+    """
+    target_date_str = f"{TARGET_YEAR}-{TARGET_MONTH:02d}-{TARGET_DAY:02d}"
+    logging.info(f"Requesting Ashtakavarga data for {target_date_str} using exact browser payload.")
+
+    # Construct the payload EXACTLY as identified from browser inspection
+    payload = {
+        'name': TARGET_NAME, 'gender': TARGET_GENDER, 'year': str(TARGET_YEAR),
+        'month': str(TARGET_MONTH), 'day': str(TARGET_DAY), 'hour': str(TARGET_HOUR),
+        'min': str(TARGET_MIN), 'apm': TARGET_APM, 'location': TARGET_LOCATION_STRING,
+        'loc': TARGET_LOC_CODE, 'utm_source': 'Ashtakavarga', 'utm_medium': '',
+        'utm_campaign': '', 'p': '1'
+    }
+
+    # Use a Session object for cookie handling and consistent headers
+    with requests.Session() as session:
+        # Set browser-like headers
+        session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            'Accept-Language': 'en-US,en;q=0.9', 'Referer': BASE_URL, 'Origin': 'https://www.prokerala.com',
+            'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1',
+        })
+
+        try:
+            # Optional initial GET request (can sometimes help with session/cookie setup)
+            logging.info(f"Making initial GET request to {BASE_URL}")
+            get_response = session.get(BASE_URL, timeout=20)
+            get_response.raise_for_status()
+            logging.info("Initial GET successful (Status: %d)", get_response.status_code)
+            # time.sleep(0.5) # Add delay if needed
+
+            # Send the crucial POST request with the correct payload
+            logging.info(f"Sending POST request with precise payload...")
+            response = session.post(BASE_URL, data=payload, timeout=30)
+            logging.info(f"Received response (Status: {response.status_code})")
+            response.raise_for_status() # Check for HTTP errors (4xx, 5xx)
+            logging.info("POST request successful.")
+
+        except requests.exceptions.RequestException as e:
+            status_code = e.response.status_code if e.response is not None else "N/A"
+            logging.error(f"Error during HTTP request: {e} (Status Code: {status_code})")
+            if e.response is not None: logging.error(f"Server Response (partial): {e.response.text[:500]}")
+            return None
+        except Exception as e:
+             logging.error(f"Unexpected error during request setup: {e}")
+             return None
+
+    # --- Start Parsing the HTML response ---
+    try:
+        soup = BeautifulSoup(response.text, 'html.parser')
+    except Exception as e:
+        logging.error(f"Error parsing HTML: {e}")
+        return None
+
+    bav_details: BavDetailType = {}
+    sav_details: SavDetailType = {}
+
+    # --- 1. Parse Detailed Bhinnashtakavarga (BAV) ---
+    logging.info("Starting BAV detail parsing...")
+    for planet_name in MAIN_PLANETS:
+        planet_tab_id = PLANET_TAB_IDS.get(planet_name)
+        if not planet_tab_id:
+            logging.warning(f"No tab ID configured for {planet_name}, skipping BAV detail.")
+            continue
+        logging.info(f"Parsing BAV details for {planet_name} (Tab ID: {planet_tab_id})")
+        planet_tab = soup.find('div', id=planet_tab_id)
+        if not planet_tab:
+            logging.warning(f"Could not find tab container '{planet_tab_id}' for {planet_name}.")
+            continue
+        # Find the first table within the planet's tab
+        data_table = planet_tab.find('table')
+        if not data_table:
+            logging.warning(f"Could not find data table within tab '{planet_tab_id}' for {planet_name}.")
+            continue
+
+        planet_bav_data: Dict[str, Dict[str, int]] = {}
+        rows = data_table.find_all('tr')
+        # Check row count (Header + 12 Signs + Total = 14)
+        if len(rows) < (len(ZODIAC_SIGNS) + 2):
+            logging.warning(f"BAV Table for {planet_name} has {len(rows)} rows, expected {len(ZODIAC_SIGNS) + 2}.")
+
+        # Process Sign Rows (skip header row 0, avoid total row for now)
+        for i in range(1, min(len(rows) -1, len(ZODIAC_SIGNS) + 1)):
+            sign_index = i - 1
+            if sign_index >= len(ZODIAC_SIGNS): continue
+            current_sign = ZODIAC_SIGNS[sign_index]
+            planet_bav_data[current_sign] = {}
+            cells = rows[i].find_all(['td', 'th']) # Allow th for sign name cell
+
+            # Expected cells: SignName + 8 Contributors + Total = 10
+            expected_bav_cells = len(CONTRIBUTING_PLANETS) + 2
+            if len(cells) < expected_bav_cells:
+                logging.warning(f"BAV Row {i} ({current_sign}) for {planet_name} has {len(cells)} cells, expected {expected_bav_cells}. Skipping.")
+                if current_sign in planet_bav_data: del planet_bav_data[current_sign]
+                continue
+
+            # Extract contributor scores (cells 1 to 8)
+            for j, contributor in enumerate(CONTRIBUTING_PLANETS):
+                cell_index = j + 1 # Data starts from the second cell
+                try:
+                    cell_text = cells[cell_index].get_text(strip=True)
+                    # Assume '1' indicates a point, otherwise 0
+                    score = 1 if cell_text == '1' else 0
+                    planet_bav_data[current_sign][contributor] = score
+                except (IndexError, ValueError):
+                    logging.error(f"Error parsing BAV cell {cell_index} for {contributor} in {current_sign} ({planet_name}). Defaulting to 0.")
+                    planet_bav_data[current_sign][contributor] = 0 # Default on error
+
+            # Extract row total (last cell)
+            try:
+                total_score = int(cells[-1].get_text(strip=True))
+                planet_bav_data[current_sign]["Total"] = total_score
+            except (IndexError, ValueError):
+                 logging.error(f"Error parsing BAV row total for {current_sign} ({planet_name}). Defaulting to 0.")
+                 planet_bav_data[current_sign]["Total"] = 0
+
+        # Process Total Row (assuming it's the last row)
+        if len(rows) >= (len(ZODIAC_SIGNS) + 2):
+            total_row_index = len(rows) - 1 # Typically last row
+            total_cells = rows[total_row_index].find_all(['td', 'th'])
+            expected_total_cells = len(CONTRIBUTING_PLANETS) + 2 # Label + 8 Contributors + GrandTotal
+
+            planet_bav_data["Total"] = {} # Store column totals and grand total
+            if len(total_cells) >= expected_total_cells:
+                 # Check if first cell looks like a 'Total' label (optional)
+                 # if "total" not in total_cells[0].get_text(strip=True).lower():
+                 #     logging.warning(f"BAV last row for {planet_name} might not be 'Total' row.")
+
+                 # Extract contributor totals (cells 1 to 8)
+                 for j, contributor in enumerate(CONTRIBUTING_PLANETS):
+                     cell_index = j + 1
+                     try:
+                         col_total = int(total_cells[cell_index].get_text(strip=True))
+                         planet_bav_data["Total"][contributor] = col_total
+                     except (IndexError, ValueError):
+                         logging.error(f"Error parsing BAV column total for {contributor} ({planet_name}). Defaulting to 0.")
+                         planet_bav_data["Total"][contributor] = 0
+
+                 # Extract grand total (last cell)
+                 try:
+                     grand_total = int(total_cells[-1].get_text(strip=True))
+                     planet_bav_data["Total"]["Total"] = grand_total # Store under "Total" key
+                 except (IndexError, ValueError):
+                     logging.error(f"Error parsing BAV grand total for {planet_name}. Defaulting to 0.")
+                     planet_bav_data["Total"]["Total"] = 0
+            else:
+                 logging.warning(f"Could not parse BAV 'Total' row for {planet_name}, incorrect cell count ({len(total_cells)}).")
+        else:
+             logging.warning(f"Could not find BAV 'Total' row for {planet_name}.")
+
+        # Store the complete data for this planet
+        if planet_bav_data:
+             bav_details[planet_name] = planet_bav_data
+             logging.info(f"Parsed BAV details for {planet_name}.")
+        else:
+             logging.warning(f"No BAV details extracted for {planet_name}.")
+
+
+    # --- 2. Parse Detailed Sarvashtakavarga (SAV) ---
+    logging.info("Starting DETAILED SAV parsing...")
+    sav_table = None
+    try:
+        # Find the SAV table using the heading span as an anchor
+        sav_heading_span = soup.find('span', class_='b', string=re.compile(r'Sarvashtakavarga Table', re.IGNORECASE))
+        if sav_heading_span:
+            logging.info("Found SAV heading span.")
+            # Find the next sibling div container
+            sav_container_div = sav_heading_span.find_next_sibling('div', class_='scrollable-content')
+            if sav_container_div:
+                logging.info("Found SAV container div.")
+                # Find the table within that div
+                sav_table = sav_container_div.find('table', class_='table')
+                if sav_table: logging.info("Found SAV table inside container.")
+                else: logging.warning("Could not find table within the SAV container div.")
+            else: # Fallback: Table might be directly after span
+                sav_table = sav_heading_span.find_next_sibling('table', class_='table')
+                if sav_table: logging.info("Found SAV table directly after heading span (fallback).")
+                else: logging.warning("Could not find SAV container div or direct table after heading span.")
+        else: # Fallback: Try finding table by specific classes if heading span fails
+            logging.warning("Could not find the 'Sarvashtakavarga Table' heading span.")
+            potential_tables = soup.find_all('table', class_='table table-bordered table-striped tc table-sm t-xs')
+            if len(potential_tables) > 0 :
+                sav_table = potential_tables[-1] # Assume last matching table is SAV
+                logging.info(f"Found {len(potential_tables)} table(s) with specific classes. Assuming last one is SAV (fallback).")
+
+        # If we found the SAV table by any method, parse it
+        if sav_table:
+            sav_body = sav_table.find('tbody')
+            # Prefer tbody rows, fall back to table rows if no tbody tag
+            sav_rows = sav_body.find_all('tr') if sav_body else sav_table.find_all('tr')
+            logging.info(f"Parsing SAV table with {len(sav_rows)} rows for details.")
+
+            # Expecting 12 signs + 1 total row = 13 rows in tbody
+            if len(sav_rows) >= len(ZODIAC_SIGNS):
+                # Process Sign Rows
+                for i in range(len(ZODIAC_SIGNS)): # Process exactly 12 rows for signs
+                    if i >= len(sav_rows): break # Safety break if table is shorter
+                    sign_index = i
+                    current_sign = ZODIAC_SIGNS[sign_index]
+                    sav_cells = sav_rows[i].find_all('td')
+
+                    # Expected cells: SignName + 7 Planets + Score = 9
+                    expected_sav_cells = len(SAV_PLANET_COLUMNS) + 2
+                    if len(sav_cells) >= expected_sav_cells:
+                        sign_sav_data: Dict[str, int] = {}
+                        try:
+                            # Parse planet scores (cells 1 to 7)
+                            for j, planet in enumerate(SAV_PLANET_COLUMNS):
+                                cell_index = j + 1 # Planet data starts from the second cell
+                                score = int(sav_cells[cell_index].get_text(strip=True))
+                                sign_sav_data[planet] = score
+
+                            # Parse total score (last cell)
+                            total_score = int(sav_cells[-1].get_text(strip=True))
+                            sign_sav_data["Score"] = total_score # Use "Score" as key
+
+                            sav_details[current_sign] = sign_sav_data # Store detailed dict
+                            logging.debug(f"SAV Details - {current_sign}: {sign_sav_data}")
+
+                        except (ValueError, IndexError) as e:
+                            logging.error(f"Error parsing detailed SAV scores for {current_sign} (row {i}): {e}. Skipping sign.")
+                            if current_sign in sav_details: del sav_details[current_sign] # Remove partial data
+                    else:
+                        logging.warning(f"SAV table row {i} ({current_sign}) has {len(sav_cells)} cells, expected {expected_sav_cells}. Skipping.")
+
+                # Process Total Row (should be the last row)
+                if len(sav_rows) >= (len(ZODIAC_SIGNS) + 1):
+                    total_row_index = len(ZODIAC_SIGNS) # Index 12 for the 13th row
+                    if total_row_index < len(sav_rows): # Check bounds
+                        total_row = sav_rows[total_row_index]
+                        total_cells = total_row.find_all('td')
+                        # Expected cells: "Total" + 7 PlanetTotals + GrandTotal = 9
+                        expected_total_cells = len(SAV_PLANET_COLUMNS) + 2
+
+                        if len(total_cells) >= expected_total_cells and "total" in total_cells[0].get_text(strip=True).lower():
+                            total_row_data: Dict[str, int] = {}
+                            try:
+                                # Parse planet totals (cells 1 to 7)
+                                for j, planet in enumerate(SAV_PLANET_COLUMNS):
+                                    cell_index = j + 1
+                                    total = int(total_cells[cell_index].get_text(strip=True))
+                                    total_row_data[planet] = total
+
+                                # Parse grand total (last cell)
+                                grand_total = int(total_cells[-1].get_text(strip=True))
+                                total_row_data["Score"] = grand_total # Use "Score" key
+
+                                sav_details["Total"] = total_row_data # Store under "Total" key
+                                logging.info(f"Parsed SAV Total row: {total_row_data}")
+
+                            except (ValueError, IndexError) as e:
+                                logging.error(f"Error parsing SAV total row: {e}.")
+                                # Keep sav_details["Total"] empty or remove it if parsing fails
+                        else:
+                             logging.warning(f"Could not identify or parse SAV grand total row structure (cells:{len(total_cells)}).")
+                    else:
+                        logging.warning(f"SAV table total row index ({total_row_index}) out of bounds ({len(sav_rows)} rows).")
+                else:
+                    logging.warning("SAV table doesn't seem to have a final Total row.")
+
+            else:
+                logging.warning(f"SAV table has fewer rows ({len(sav_rows)}) than expected for signs.")
+        else:
+            # This message means none of the table finding methods worked
+            logging.error("Failed to find the Sarvashtakavarga table using any method.")
+
+    except Exception as e:
+        logging.error(f"An unexpected error occurred during SAV parsing: {e}", exc_info=True)
+
+
+    # --- Final Check & Return ---
+    if not bav_details and not sav_details:
+        logging.error("Failed to parse any BAV or SAV data from the page.")
+        return None
+
+    # Return both detailed dictionaries
+    return bav_details, sav_details
+
+
+# --- Printing Functions ---
+
+def print_bhinnashtakavarga_breakdown(planet_name: str, bav_data: Dict[str, Dict[str, int]]):
+    """Prints the detailed BAV breakdown for a single planet."""
+    print(f"\n--- {planet_name} (Bhinnashtaka Varga Breakdown) ---")
+
+    # Define headers and widths
+    headers = ["Sign"] + [COLUMN_HEADER_MAP.get(p, p[:3]) for p in CONTRIBUTING_PLANETS] + ["Total"]
+    sign_width = 11
+    col_width = max(max(len(h) for h in headers[1:-1]), 5) # Width for contributor columns
+    total_width = 5 # Width for Total column
+
+    # Print header row
+    header_str = f"{headers[0]:<{sign_width}}"
+    for h in headers[1:-1]: header_str += f"{h:>{col_width}}"
+    header_str += f"{headers[-1]:>{total_width}}"
+    print(header_str)
+    print("-" * len(header_str))
+
+    # Print data rows (Signs)
+    for sign in ZODIAC_SIGNS:
+        if sign not in bav_data:
+            print(f"{sign:<{sign_width}}" + (" -" * (len(headers) - 1)))
+            continue
+        row_str = f"{sign:<{sign_width}}"
+        sign_data = bav_data[sign]
+        # Print contributor scores (' 1' or empty)
+        for contributor in CONTRIBUTING_PLANETS:
+            score = sign_data.get(contributor, 0)
+            display = " 1" if score == 1 else ""
+            row_str += f"{display:>{col_width}}"
+        # Print row total
+        row_total = sign_data.get("Total", "-")
+        row_str += f"{row_total:>{total_width}}"
+        print(row_str)
+
+    # Print Total row
+    print("-" * len(header_str))
+    if "Total" in bav_data:
+        total_row_str = f"{'Total':<{sign_width}}"
+        total_data = bav_data["Total"]
+        for contributor in CONTRIBUTING_PLANETS:
+            col_total = total_data.get(contributor, "-")
+            total_row_str += f"{col_total:>{col_width}}"
+        grand_total = total_data.get("Total", "-")
+        total_row_str += f"{grand_total:>{total_width}}"
+        print(total_row_str)
+    else:
+        print(f"{'Total':<{sign_width}}" + (" -" * (len(headers) - 1)))
+
+
+def print_sarvashtakavarga(sav_details: SavDetailType):
+    """Prints the detailed Sarvashtakavarga scores table."""
+    if not sav_details:
+        print("\n--- Sarvashtakavarga Table ---")
+        print("No Sarvashtakavarga data found.")
+        return
+
+    print("\n--- Sarvashtakavarga Table ---")
+
+    # Define headers and widths based on SAV_PLANET_COLUMNS
+    headers = ["Sign"] + SAV_PLANET_COLUMNS + ["Score"]
+    sign_width = 11
+    # Calculate width based on planet names (e.g., "Mercury") or scores
+    col_width = max(max(len(h) for h in headers[1:-1]), 3) + 1 # +1 for padding
+    score_width = max(len(headers[-1]), 5) # Width for Score column
+
+    # Print header row
+    header_str = f"{headers[0]:<{sign_width}}"
+    for h in headers[1:-1]: # Planet headers
+        header_str += f"{h:>{col_width}}"
+    header_str += f"{headers[-1]:>{score_width}}" # Score header
+    print(header_str)
+    print("-" * len(header_str))
+
+    # Print data rows (Signs)
+    for sign in ZODIAC_SIGNS:
+        if sign not in sav_details:
+            print(f"{sign:<{sign_width}}" + (" -" * (len(headers) - 1))) # Placeholders if missing
+            continue
+        row_str = f"{sign:<{sign_width}}"
+        sign_data = sav_details[sign]
+        # Print planet scores
+        for planet in SAV_PLANET_COLUMNS:
+            score = sign_data.get(planet, "-") # Use '-' if missing
+            row_str += f"{score:>{col_width}}"
+        # Print total score for the sign
+        total_score = sign_data.get("Score", "-")
+        row_str += f"{total_score:>{score_width}}"
+        print(row_str)
+
+    # Print Total row
+    print("-" * len(header_str))
+    if "Total" in sav_details:
+        total_row_str = f"{'Total':<{sign_width}}"
+        total_data = sav_details["Total"]
+        # Print planet totals
+        for planet in SAV_PLANET_COLUMNS:
+            col_total = total_data.get(planet, "-")
+            total_row_str += f"{col_total:>{col_width}}"
+        # Print grand total score
+        grand_total = total_data.get("Score", "-")
+        total_row_str += f"{grand_total:>{score_width}}"
+        print(total_row_str)
+    else:
+        # Only print placeholder if Total row wasn't found/parsed
+        print(f"{'Total':<{sign_width}}" + (" -" * (len(headers) - 1)))
+
+
+# --- Main Execution ---
+if __name__ == "__main__":
+    logging.info("Script started.")
+    # Call the main function to get data
+    parsed_data = get_ashtakavarga_data()
+
+    if parsed_data:
+        # Unpack the returned tuple
+        bav_details, sav_details = parsed_data
+        logging.info("Data fetched and parsed successfully.")
+
+        # Print header information
+        print("\n" + "="*70)
+        target_date_str = f"{TARGET_YEAR}-{TARGET_MONTH:02d}-{TARGET_DAY:02d}"
+        print(f"Ashtakavarga for Date: {target_date_str}")
+        print(f"Time: {TARGET_HOUR}:{TARGET_MIN:02d} {TARGET_APM.upper()}")
+        print(f"Location: {TARGET_LOCATION_STRING} (loc: {TARGET_LOC_CODE})")
+        print(f"Name: {TARGET_NAME}, Gender: {TARGET_GENDER}")
+        print("="*70)
+
+        # Print BAV breakdown for each planet
+        if bav_details:
+            for planet in MAIN_PLANETS:
+                if planet in bav_details:
+                    print_bhinnashtakavarga_breakdown(planet, bav_details[planet])
+                else:
+                    print(f"\n--- {planet} (Bhinnashtaka Varga Breakdown) ---")
+                    print(f"No breakdown data found for {planet}.")
+        else:
+            print("\nNo Bhinnashtakavarga breakdown data was parsed.")
+
+        # Print the detailed SAV table
+        print_sarvashtakavarga(sav_details)
+
+        # Print footer
+        print("\n" + "="*70)
+        logging.info("Script finished successfully.")
+
+    else:
+        # Handle case where data fetching/parsing failed
+        target_date_str = f"{TARGET_YEAR}-{TARGET_MONTH:02d}-{TARGET_DAY:02d}"
+        print(f"\nCould not retrieve or parse Ashtakavarga data for {target_date_str}. Check log for errors.")
+        logging.error("Script finished with errors.")
