@@ -1,0 +1,395 @@
+import requests
+from bs4 import BeautifulSoup
+import logging
+import sys
+import time
+import datetime  # Import datetime for current date
+from typing import Dict, List, Optional, Tuple, Union
+import re # Import regex
+
+# --- Configuration ---
+# Get current date and time
+current_datetime = datetime.datetime.now()
+
+TARGET_NAME = "SP500"
+TARGET_GENDER = "male"
+TARGET_YEAR = current_datetime.year
+TARGET_MONTH = current_datetime.month
+TARGET_DAY = current_datetime.day
+TARGET_HOUR = 9
+TARGET_MIN = 30
+TARGET_APM = "am"
+TARGET_LOCATION_STRING = "New York City, New York, United States"
+TARGET_LOC_CODE = "5128581"
+
+BASE_URL = "https://www.prokerala.com/astrology/shadbala.php"
+
+# Configure logging with both file and console output
+log_filename = f"shadbala_log_{current_datetime.strftime('%Y%m%d')}.log"
+logging.basicConfig(
+    level=logging.INFO, 
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(log_filename),
+        logging.StreamHandler()
+    ]
+)
+
+# --- Definitions for Parsing and Printing ---
+
+# Shadbala Components (Rows) - Used for ordering output
+SHADBALA_ROW_COMPONENTS = [
+    "Uchcha Bala", "Saptavargaja Bala", "Ojhayugmarasiamsa Bala", "Kendradi Bala",
+    "Drekkana Bala", "Sthaana Bala", "Dig Bala", "Nathonnatha Bala",
+    "Paksha Bala", "Tribhaga Bala", "Varsha Bala", "Masa Bala", "Dina Bala",
+    "Hora Bala", "Ayana Bala", "Yudhdha Bala", "Kaala Bala", "Cheshta Bala",
+    "Naisargika Bala", "Drik Bala", "Total shadbala Bala", "Shadbala in rupas",
+    "minimum requirement", "Ratio", "Relative rank", "Ishta Phala", "Kashta Phala"
+]
+# Expected Planets (Columns in Shadbala)
+EXPECTED_PLANETS = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn"]
+
+# Bhavabala Houses (Rows) - Use strings for keys
+BHAVABALA_HOUSES = [str(i) for i in range(1, 13)]
+# **REMOVED** BHAVABALA_TARGET_COLUMN - We will now parse all columns dynamically
+
+# --- Type Hinting ---
+# Shadbala: { ComponentName: { PlanetName: Value, ... }, ... }
+ShadbalaDataType = Dict[str, Dict[str, Union[float, int, str]]]
+# **REVISED** Bhavabala: { HouseNumberString: { ColumnName: Value, ... }, ... }
+BhavabalaDataType = Dict[str, Dict[str, Union[float, int, str]]]
+
+
+# --- Data Fetching and Parsing Function ---
+
+def get_shadbala_bhavabala_data() -> Optional[Tuple[ShadbalaDataType, BhavabalaDataType, List[str], List[str]]]:
+    """
+    Fetches and parses Shadbala and Bhavabala tables. Handles all Bhavabala columns.
+
+    Returns:
+        A tuple containing:
+            (shadbala_data, bhavabala_data, shadbala_planet_headers, bhavabala_column_headers)
+        Returns None if fetching or parsing fails significantly.
+    """
+    target_date_str = f"{TARGET_YEAR}-{TARGET_MONTH:02d}-{TARGET_DAY:02d}"
+    logging.info(f"Requesting Shadbala/Bhavabala data for {target_date_str}...")
+
+    payload = {
+        'name': TARGET_NAME, 'gender': TARGET_GENDER, 'year': str(TARGET_YEAR),
+        'month': str(TARGET_MONTH), 'day': str(TARGET_DAY), 'hour': str(TARGET_HOUR),
+        'min': str(TARGET_MIN), 'apm': TARGET_APM, 'location': TARGET_LOCATION_STRING,
+        'loc': TARGET_LOC_CODE, 'utm_source': 'Shadbala', 'utm_medium': '',
+        'utm_campaign': '', 'p': '1'
+    }
+
+    with requests.Session() as session:
+        session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+            'Accept-Language': 'en-US,en;q=0.9', 'Referer': BASE_URL, 'Origin': 'https://www.prokerala.com',
+            'Connection': 'keep-alive', 'Upgrade-Insecure-Requests': '1',
+        })
+        try:
+            logging.info(f"Making initial GET request to {BASE_URL}")
+            get_response = session.get(BASE_URL, timeout=20)
+            get_response.raise_for_status()
+            logging.info("Initial GET successful.")
+
+            logging.info(f"Sending POST request with payload...")
+            response = session.post(BASE_URL, data=payload, timeout=30)
+            logging.info(f"Received response (Status: {response.status_code})")
+            response.raise_for_status()
+            logging.info("POST request successful.")
+
+        except requests.exceptions.RequestException as e:
+            status_code = e.response.status_code if e.response is not None else "N/A"
+            logging.error(f"HTTP request error: {e} (Status Code: {status_code})")
+            if e.response is not None: logging.error(f"Server Response (partial): {e.response.text[:500]}")
+            return None
+        except Exception as e:
+             logging.error(f"Unexpected error during request setup: {e}")
+             return None
+
+    try:
+        soup = BeautifulSoup(response.text, 'html.parser')
+    except Exception as e:
+        logging.error(f"Error parsing HTML: {e}")
+        return None
+
+    shadbala_data: ShadbalaDataType = {}
+    bhavabala_data: BhavabalaDataType = {}
+    shadbala_planet_headers: List[str] = []
+    bhavabala_column_headers: List[str] = [] # Store the headers like "Bhavadhipati Bala", etc.
+
+    # --- 1. Parse Shadbala Table (Components=Rows, Planets=Cols) ---
+    logging.info("Starting Shadbala Table parsing...")
+    # (Shadbala parsing logic remains the same as the previous correct version)
+    try:
+        shadbala_h2 = soup.find('h2', string=re.compile(r'Shadbala Table', re.IGNORECASE))
+        if shadbala_h2:
+            logging.info("Found Shadbala H2 heading.")
+            shadbala_table = None
+            wrapper_div = shadbala_h2.find_next_sibling('div', class_='table-responsive')
+            if wrapper_div:
+                 shadbala_table = wrapper_div.find('table')
+                 logging.info("Found Shadbala table inside 'table-responsive' div.")
+            if not shadbala_table:
+                 shadbala_table = shadbala_h2.find_next_sibling('table')
+                 if shadbala_table: logging.info("Found Shadbala table as direct sibling.")
+
+            if shadbala_table:
+                rows = shadbala_table.find_all('tr')
+                if len(rows) > 1:
+                    header_cells = rows[0].find_all(['th', 'td'])
+                    # Skip first cell ("Balas") get planet names
+                    shadbala_planet_headers = [cell.get_text(strip=True) for cell in header_cells[1:]]
+                    logging.info(f"Shadbala Table - Found Planet Columns: {shadbala_planet_headers}")
+                    if not shadbala_planet_headers:
+                         logging.error("Could not parse any planet headers from Shadbala table.")
+
+                    for i, row in enumerate(rows[1:]):
+                        cells = row.find_all(['td', 'th'])
+                        if len(cells) >= len(shadbala_planet_headers) + 1:
+                            try:
+                                component_name = cells[0].get_text(strip=True)
+                                if not component_name: continue
+                                shadbala_data[component_name] = {}
+                                for j, planet_name in enumerate(shadbala_planet_headers):
+                                    cell_index = j + 1
+                                    cell_text = cells[cell_index].get_text(strip=True)
+                                    try:
+                                        value = float(cell_text)
+                                        if value.is_integer(): value = int(value)
+                                    except ValueError:
+                                        value = cell_text
+                                    shadbala_data[component_name][planet_name] = value
+                                logging.debug(f"Parsed Shadbala Row '{component_name}': {shadbala_data[component_name]}")
+                            except IndexError: logging.error(f"IndexError parsing Shadbala row {i+1} (comp: '{component_name}')")
+                            except Exception as e: logging.error(f"Error parsing Shadbala row {i+1} (comp: '{component_name}'): {e}")
+                        else:
+                            component_name_check = cells[0].get_text(strip=True) if cells else "N/A"
+                            logging.warning(f"Shadbala row {i+1} (Comp: '{component_name_check}') has {len(cells)} cells, expected {len(shadbala_planet_headers) + 1}.")
+                else: logging.warning("Shadbala table has no data rows.")
+            else: logging.warning("Could not find Shadbala table.")
+        else: logging.warning("Could not find Shadbala H2 heading.")
+    except Exception as e:
+        logging.error(f"Unexpected error during Shadbala parsing: {e}", exc_info=True)
+
+    # --- 2. Parse Bhavabala Table (Parse ALL Columns) ---
+    logging.info("Starting Bhavabala Table parsing (reading all columns)...")
+    try:
+        bhavabala_h2 = soup.find('h2', string=re.compile(r'Bhavabala Table', re.IGNORECASE))
+        if bhavabala_h2:
+            logging.info("Found Bhavabala H2 heading.")
+            bhavabala_table = None
+            wrapper_div = bhavabala_h2.find_next_sibling('div', class_='table-responsive')
+            if wrapper_div:
+                 bhavabala_table = wrapper_div.find('table')
+                 logging.info("Found Bhavabala table inside 'table-responsive' div.")
+            if not bhavabala_table:
+                 bhavabala_table = bhavabala_h2.find_next_sibling('table')
+                 if bhavabala_table: logging.info("Found Bhavabala table as direct sibling.")
+
+            if bhavabala_table:
+                rows = bhavabala_table.find_all('tr')
+                if len(rows) > 1:
+                    # --- Get ALL Column Headers ---
+                    header_cells = rows[0].find_all(['th', 'td'])
+                    # Store headers starting from the second one (skip "House")
+                    bhavabala_column_headers = [cell.get_text(strip=True) for cell in header_cells[1:]]
+                    logging.info(f"Bhavabala Table - Found Column Headers: {bhavabala_column_headers}")
+                    if not bhavabala_column_headers:
+                         logging.error("Could not parse any column headers from Bhavabala table.")
+
+                    # --- Extract Data Rows ---
+                    for i, row in enumerate(rows[1:]): # Skip header row
+                        cells = row.find_all(['td', 'th'])
+                        # Expecting House + number of columns found in header
+                        expected_cell_count = len(bhavabala_column_headers) + 1
+                        if len(cells) >= expected_cell_count:
+                            try:
+                                # Extract House Key (first column)
+                                house_raw = cells[0].get_text(strip=True)
+                                match = re.search(r'\d+', house_raw)
+                                if match: house_key = match.group(0)
+                                else: house_key = house_raw # Fallback
+
+                                if house_key not in BHAVABALA_HOUSES:
+                                     logging.warning(f"Parsed house key '{house_key}' not in expected list {BHAVABALA_HOUSES}.")
+
+                                # Initialize dict for this house
+                                house_data: Dict[str, Union[float, int, str]] = {}
+
+                                # Iterate through the headers and corresponding cells
+                                for j, header_name in enumerate(bhavabala_column_headers):
+                                    cell_index = j + 1 # Data cells start from index 1
+                                    cell_text = cells[cell_index].get_text(strip=True)
+                                    try:
+                                        # Convert to number if possible
+                                        value = float(cell_text)
+                                        if value.is_integer(): value = int(value)
+                                    except ValueError:
+                                        value = cell_text # Keep as string if conversion fails
+                                    house_data[header_name] = value
+
+                                # Store the complete data for the house
+                                bhavabala_data[house_key] = house_data
+                                logging.debug(f"Parsed Bhavabala for House '{house_key}': {house_data}")
+
+                            except IndexError:
+                                logging.error(f"IndexError parsing Bhavabala row {i+1} (House: '{house_key}')")
+                            except Exception as e:
+                                logging.error(f"Unexpected error parsing Bhavabala row {i+1} (House: '{house_key}'): {e}")
+                        else:
+                            logging.warning(f"Bhavabala row {i+1} has {len(cells)} cells, expected {expected_cell_count}. Skipping.")
+                else:
+                     logging.warning("Bhavabala table has no data rows.")
+            else:
+                logging.warning("Could not find the Bhavabala table after H2 heading.")
+        else:
+            logging.warning("Could not find the H2 heading 'Bhavabala Table'.")
+
+    except Exception as e:
+        logging.error(f"An unexpected error occurred during Bhavabala table parsing: {e}", exc_info=True)
+
+    # --- Final Check & Return ---
+    if not shadbala_data and not bhavabala_data:
+        logging.error("Failed to parse any Shadbala or Bhavabala data.")
+        return None
+    if not shadbala_planet_headers and shadbala_data:
+         logging.warning("Parsed Shadbala data exists, but failed to extract Planet headers.")
+    if not bhavabala_column_headers and bhavabala_data:
+         logging.warning("Parsed Bhavabala data exists, but failed to extract Column headers.")
+
+    # Return all parsed data and the headers found
+    return shadbala_data, bhavabala_data, shadbala_planet_headers, bhavabala_column_headers
+
+
+# --- Printing Functions ---
+
+def print_shadbala_table(shadbala_data: ShadbalaDataType, planet_headers: List[str]):
+    """Prints the formatted Shadbala table (Components=Rows, Planets=Cols)."""
+    print("\n--- Shadbala Table ---")
+    if not shadbala_data: print("No Shadbala data found."); return
+    if not planet_headers: print("No Planet headers for Shadbala."); return
+
+    all_parsed_components = list(shadbala_data.keys())
+    ordered_components = [comp for comp in SHADBALA_ROW_COMPONENTS if comp in shadbala_data]
+    extra_components = [comp for comp in all_parsed_components if comp not in SHADBALA_ROW_COMPONENTS]
+    display_components = ordered_components + sorted(extra_components)
+
+    comp_col_width = max(len("Component"), max((len(c) for c in display_components), default=0))
+    planet_widths = {p: len(p) for p in planet_headers}
+    for comp_name in display_components:
+        if comp_name in shadbala_data:
+            for planet in planet_headers:
+                if planet in shadbala_data[comp_name]:
+                    value = shadbala_data[comp_name][planet]
+                    display_value = f"{value:.2f}" if isinstance(value, float) else str(value)
+                    planet_widths[planet] = max(planet_widths[planet], len(display_value))
+
+    header_str = f"{'Component':<{comp_col_width}}"
+    for planet in planet_headers: header_str += f" | {planet:>{planet_widths[planet]}}"
+    print(header_str)
+    print("-" * len(header_str))
+
+    for comp_name in display_components:
+         row_str = f"{comp_name:<{comp_col_width}}"
+         component_data = shadbala_data.get(comp_name, {})
+         for planet in planet_headers:
+             value = component_data.get(planet, "-")
+             display_value = f"{value:.2f}" if isinstance(value, float) else str(value)
+             row_str += f" | {display_value:>{planet_widths[planet]}}"
+         print(row_str)
+
+
+def print_bhavabala_table(bhavabala_data: BhavabalaDataType, column_headers: List[str]):
+    """Prints the formatted Bhavabala table with all columns."""
+    print(f"\n--- Bhavabala Table ---")
+    if not bhavabala_data: print("No Bhavabala data found."); return
+    if not column_headers: print("No Column headers for Bhavabala."); return
+
+    # Calculate widths for all columns
+    house_width = len("House")
+    col_widths = {header: len(header) for header in column_headers}
+
+    # Find max widths based on data
+    for house_key in BHAVABALA_HOUSES:
+        if house_key in bhavabala_data:
+             house_width = max(house_width, len(house_key)) # Check house key length too
+             house_data = bhavabala_data[house_key]
+             for header in column_headers:
+                 if header in house_data:
+                     value = house_data[header]
+                     display_value = f"{value:.2f}" if isinstance(value, float) else str(value)
+                     col_widths[header] = max(col_widths[header], len(display_value))
+
+    # Print header
+    header_str = f"{'House':<{house_width}}"
+    for header in column_headers:
+        header_str += f" | {header:>{col_widths[header]}}"
+    print(header_str)
+    print("-" * len(header_str))
+
+    # Print data rows (use BHAVABALA_HOUSES order)
+    for house_key in BHAVABALA_HOUSES:
+        row_str = f"{house_key:<{house_width}}"
+        if house_key in bhavabala_data:
+            house_data = bhavabala_data[house_key]
+            for header in column_headers:
+                value = house_data.get(header, "-") # Use '-' if data missing for a column
+                display_value = f"{value:.2f}" if isinstance(value, float) else str(value)
+                row_str += f" | {display_value:>{col_widths[header]}}"
+        else:
+             logging.warning(f"House {house_key} expected but not found in scraped Bhavabala data.")
+             # Print placeholders if house data is missing entirely
+             for header in column_headers:
+                 row_str += f" | {'-':>{col_widths[header]}}"
+        print(row_str)
+
+    # Optionally print extra houses found
+    extra_houses = set(bhavabala_data.keys()) - set(BHAVABALA_HOUSES)
+    if extra_houses:
+        print("-" * len(header_str))
+        logging.info(f"Printing extra/unrecognized house keys found: {extra_houses}")
+        for house_key in sorted(list(extra_houses)):
+             row_str = f"{house_key:<{house_width}}"
+             house_data = bhavabala_data[house_key]
+             for header in column_headers:
+                 value = house_data.get(header, "-")
+                 display_value = f"{value:.2f}" if isinstance(value, float) else str(value)
+                 row_str += f" | {display_value:>{col_widths[header]}}"
+             print(row_str)
+
+
+# --- Main Execution ---
+if __name__ == "__main__":
+    logging.info("Script started.")
+    parsed_data = get_shadbala_bhavabala_data()
+
+    if parsed_data:
+        # Unpack all four returned values
+        shadbala_data, bhavabala_data, shadbala_planet_headers, bhavabala_column_headers = parsed_data
+        logging.info("Data fetched and parsed.")
+
+        print("\n" + "="*70)
+        target_date_str = f"{TARGET_YEAR}-{TARGET_MONTH:02d}-{TARGET_DAY:02d}"
+        print(f"Shadbala & Bhavabala for Date: {target_date_str}")
+        print(f"Time: {TARGET_HOUR}:{TARGET_MIN:02d} {TARGET_APM.upper()}")
+        print(f"Location: {TARGET_LOCATION_STRING} (loc: {TARGET_LOC_CODE})")
+        print(f"Name: {TARGET_NAME}, Gender: {TARGET_GENDER}")
+        print("="*70)
+
+        # Print Shadbala table
+        print_shadbala_table(shadbala_data, shadbala_planet_headers)
+
+        # Print Bhavabala table using its specific headers
+        print_bhavabala_table(bhavabala_data, bhavabala_column_headers)
+
+        print("\n" + "="*70)
+        logging.info("Script finished successfully.")
+
+    else:
+        target_date_str = f"{TARGET_YEAR}-{TARGET_MONTH:02d}-{TARGET_DAY:02d}"
+        print(f"\nCould not retrieve or parse Shadbala/Bhavabala data for {target_date_str}. Check log for errors.")
+        logging.error("Script finished with errors.")
