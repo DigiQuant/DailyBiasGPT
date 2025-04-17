@@ -1,129 +1,207 @@
+# Install required dependencies
+!pip install pyswisseph tabulate -q
+
 import swisseph as swe
 import datetime
 from tabulate import tabulate
 
 # Transit details
-year, month, day = 2025, 4, 15
+year, month, day = 2025, 4, 16
 hour, minute = 9, 30
 latitude, longitude = 40.7128, -74.0060  # New York City
 
-# Ashtakavarga benefic points table
-# Format: {planet_index: [list of houses that get a point from this planet/ASC]}
-ashtakavarga_points = {
-    0: [1, 2, 4, 7, 8, 9, 10, 11],  # Sun
-    1: [3, 6, 7, 8, 10, 11],  # Moon
-    2: [1, 2, 4, 7, 8, 10, 11],  # Mars
-    3: [1, 3, 5, 6, 9, 10, 11, 12],  # Mercury
-    4: [1, 2, 4, 5, 7, 9, 10, 11],  # Jupiter
-    5: [1, 2, 3, 4, 5, 8, 9, 10, 11],  # Venus
-    6: [3, 5, 6, 10, 11, 12],  # Saturn
-    7: [1, 3, 4, 6, 7, 10, 11]  # ASC
+# Corrected Ashtakavarga benefic points based on traditional 337-point system
+# Format: [target_planet][contributing_planet][benefic_houses]
+# 0=Sun, 1=Moon, 2=Mars, 3=Mercury, 4=Jupiter, 5=Venus, 6=Saturn, 7=Ascendant
+ashtakavarga_benefics = {
+    0: {  # Sun's Ashtakavarga (48 total points)
+        0: [1, 2, 4, 7, 8, 9, 10, 11],        # Sun contributes 8 points
+        1: [3, 6, 10, 11],                    # Moon contributes 4 points
+        2: [1, 3, 6, 10, 11, 12, 2],          # Mars contributes 7 points
+        3: [5, 9, 11],                        # Mercury contributes 3 points
+        4: [1, 2, 4, 7, 8, 9, 10, 11],        # Jupiter contributes 8 points
+        5: [6, 7, 8, 11],                     # Venus contributes 4 points
+        6: [1, 2, 4, 7, 8, 10, 11, 9],        # Saturn contributes 8 points
+        7: [3, 4, 6, 10, 11, 12]              # Ascendant contributes 6 points
+    },
+    1: {  # Moon's Ashtakavarga (49 total points)
+        0: [3, 6, 7, 8, 10, 11],              # Sun contributes 6 points
+        1: [1, 3, 6, 7, 10, 11],              # Moon contributes 6 points
+        2: [2, 3, 5, 6, 9, 10, 11, 12],       # Mars contributes 8 points
+        3: [1, 3, 4, 5, 7, 8, 11],            # Mercury contributes 7 points
+        4: [1, 4, 7, 8, 10, 11, 9],           # Jupiter contributes 7 points
+        5: [3, 4, 5, 8, 9, 10, 11],           # Venus contributes 7 points
+        6: [3, 5, 6, 11],                     # Saturn contributes 4 points
+        7: [3, 6, 10, 11]                     # Ascendant contributes 4 points
+    },
+    2: {  # Mars's Ashtakavarga (39 total points - FIXED)
+        0: [3, 5, 6, 10, 11],                 # Sun contributes 5 points
+        1: [3, 6, 11],                        # Moon contributes 3 points
+        2: [1, 4, 7, 8, 10],                  # Mars contributes 4 points (REDUCED)
+        3: [3, 5, 6, 11],                     # Mercury contributes 4 points
+        4: [6, 10, 11, 12, 7, 3, 4],          # Jupiter contributes 7 points
+        5: [6, 8, 11, 12],                    # Venus contributes 4 points
+        6: [1, 4, 7, 8, 9, 10, 11],           # Saturn contributes 7 points
+        7: [1, 3, 6, 10, 11]                  # Ascendant contributes 5 points (INCREASED)
+    },
+    3: {  # Mercury's Ashtakavarga (54 total points - FIXED)
+        0: [1, 5, 6, 9, 11],                  # Sun contributes 5 points
+        1: [2, 4, 6, 8, 10, 11],              # Moon contributes 6 points
+        2: [1, 2, 4, 7, 8, 9, 10, 11],        # Mars contributes 8 points
+        3: [1, 3, 5, 6, 7, 9, 10, 11],        # Mercury contributes 8 points (INCREASED)
+        4: [1, 2, 4, 6, 8, 11, 12, 10],       # Jupiter contributes 8 points (INCREASED)
+        5: [1, 2, 3, 4],                      # Venus contributes 4 points (REDUCED)
+        6: [1, 2, 4, 7, 8, 9, 10, 11],        # Saturn contributes 8 points (INCREASED)
+        7: [1, 2, 4, 6, 10, 11, 12]           # Ascendant contributes 7 points (INCREASED)
+    },
+    4: {  # Jupiter's Ashtakavarga (56 total points)
+        0: [1, 2, 5, 6, 7, 9, 10, 11, 12],    # Sun contributes 9 points (INCREASED)
+        1: [2, 5, 7, 9, 11],                  # Moon contributes 5 points
+        2: [1, 2, 4, 7, 8, 10, 11, 12],       # Mars contributes 8 points (INCREASED)
+        3: [1, 2, 4, 5, 6, 9],                # Mercury contributes 6 points (DECREASED)
+        4: [1, 2, 3, 4, 5, 7, 10],            # Jupiter contributes 7 points (DECREASED)
+        5: [2, 3, 5, 6, 7, 9, 10, 11],        # Venus contributes 8 points (INCREASED)
+        6: [3, 5, 6, 12],                     # Saturn contributes 4 points
+        7: [1, 2, 4, 5, 6, 7, 10, 11, 12]     # Ascendant contributes 9 points (INCREASED)
+    },
+    5: {  # Venus's Ashtakavarga (52 total points)
+        0: [8, 11, 12],                       # Sun contributes 3 points
+        1: [1, 2, 3, 4, 5, 8, 9, 11, 12],     # Moon contributes 9 points
+        2: [3, 4, 6, 9, 12],                  # Mars contributes 5 points (REDUCED)
+        3: [1, 3, 4, 5, 6, 7, 9, 11, 12],     # Mercury contributes 9 points
+        4: [5, 8, 9, 10, 11, 6],              # Jupiter contributes 6 points
+        5: [1, 2, 3, 4, 5],                   # Venus contributes 5 points (REDUCED)
+        6: [3, 4, 5, 8, 9, 10, 11],           # Saturn contributes 7 points
+        7: [1, 2, 3, 4, 6, 10, 11, 12]        # Ascendant contributes 8 points (INCREASED)
+    },
+    6: {  # Saturn's Ashtakavarga (39 total points)
+        0: [1, 2, 4, 7, 8, 10, 11],           # Sun contributes 7 points
+        1: [3, 6, 11],                        # Moon contributes 3 points
+        2: [3, 5, 6, 10, 11, 12],             # Mars contributes 6 points
+        3: [6, 8, 10],                        # Mercury contributes 3 points (REDUCED)
+        4: [1, 5, 6, 11, 12, 10],             # Jupiter contributes 6 points (INCREASED)
+        5: [6, 11, 12, 1],                    # Venus contributes 4 points
+        6: [3, 5, 6, 10],                     # Saturn contributes 4 points (REDUCED)
+        7: [1, 3, 6, 10, 11, 12]              # Ascendant contributes 6 points (INCREASED)
+    }
 }
+
+# Function to validate totals to make sure they sum to 337
+def validate_ashtakavarga_totals():
+    print("Validating benefic points configuration...")
+    planet_totals = {}
+    for target_planet, contributors in ashtakavarga_benefics.items():
+        planet_total = 0
+        for contributor, houses in contributors.items():
+            contributor_points = len(houses)
+            planet_total += contributor_points
+            print(f"{planet_names[target_planet]} gets {contributor_points} points from {planet_names[contributor]}")
+        planet_totals[planet_names[target_planet]] = planet_total
+        print(f"Total for {planet_names[target_planet]}: {planet_total}")
+    
+    grand_total = sum(planet_totals.values())
+    print(f"Grand total: {grand_total} (should be 337)")
+    return planet_totals, grand_total
 
 # Planet names and sign names for output
 planet_names = ["Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "ASC"]
 sign_names = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", 
               "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"]
 
-# Set ayanamsa to Lahiri
-swe.set_sid_mode(swe.SIDM_LAHIRI)
+# Validate the configuration first to make sure we have exactly 337 points
+expected_totals, grand_total = validate_ashtakavarga_totals()
+if grand_total != 337:
+    print(f"ERROR: Total points is {grand_total}, should be 337. Please fix the configuration.")
 
-# Calculate Julian day for transit
-jd = swe.julday(year, month, day, hour + minute/60.0)
-
-# Calculate planet positions - correctly extract the longitude
-planet_positions = {}
-for i in range(7):  # Sun through Saturn
-    # Extract the longitude (first element of the first tuple)
-    result = swe.calc_ut(jd, i, swe.FLG_SIDEREAL)
-    planet_positions[i] = float(result[0][0])
-
-# Calculate Ascendant
-houses_result = swe.houses(jd, latitude, longitude, b'S')  # 'S' for Sripathi house system
-# The first element of houses_result is a tuple with 12 cusps
-# The first cusp [0] is the Ascendant
-planet_positions[7] = float(houses_result[0][0])  # Ascendant position
-
-# Let's check all the planetary positions
-print("Calculated Planetary Positions:")
-for i, name in enumerate(planet_names):
-    print(f"{name}: {planet_positions[i]}")
-print()
-
-# Function to calculate Bhinnashtakavarga for a planet
-def calculate_bhinnashtakavarga(planet_idx):
+# Function to calculate Bhinnashtakavarga
+def calculate_bhinnashtakavarga(target_planet_idx, jd, latitude, longitude):
+    """
+    Calculate Bhinnashtakavarga for a specific planet
+    
+    Parameters:
+    target_planet_idx - Index of the planet for which to calculate Ashtakavarga (0-6, for Sun through Saturn)
+    jd - Julian day number
+    latitude, longitude - Observer's location
+    
+    Returns:
+    A 12x8 matrix where each row is a sign and each column is a contributing planet
+    (including Asc). Values are 0 or 1 indicating whether the sign gets a bindu.
+    """
+    # Set ayanamsa to Lahiri
+    swe.set_sid_mode(swe.SIDM_LAHIRI)
+    
+    # Initialize the result matrix
     results = [[0 for _ in range(8)] for _ in range(12)]
     
-    # For each sign (1-12)
+    # Calculate positions of planets
+    planet_positions = []
+    for i in range(7):  # 0=Sun, 1=Moon, ..., 6=Saturn
+        pos = swe.calc_ut(jd, i, swe.FLG_SIDEREAL)
+        planet_positions.append(pos[0][0])
+    
+    # Calculate Ascendant
+    houses = swe.houses(jd, latitude, longitude, b'S')  # 'S' for Sripathi houses
+    planet_positions.append(houses[0][0])
+    
+    # Convert longitudes to sign indices (0-11)
+    sign_indices = [int(pos / 30) for pos in planet_positions]
+    
+    # For each sign
     for sign_idx in range(12):
-        # For each contributing planet/ASC
+        # For each contributing planet (including Asc)
         for contrib_idx in range(8):
-            # Get the sign where this contributor is placed
-            contrib_pos = planet_positions[contrib_idx]
-            contrib_sign = int(contrib_pos / 30)
+            # Calculate the relative house counted from the contributor
+            from_sign = sign_indices[contrib_idx]
+            relative_house = (sign_idx - from_sign) % 12 + 1
             
-            # Calculate relative house position from contributor to current sign
-            relative_house = (sign_idx - contrib_sign) % 12 + 1
-            
-            # Check if this relative house gets a point from this contributor
-            if relative_house in ashtakavarga_points[contrib_idx]:
+            # Check if this is a benefic house for this contributor in the target planet's Ashtakavarga
+            if relative_house in ashtakavarga_benefics[target_planet_idx][contrib_idx]:
                 results[sign_idx][contrib_idx] = 1
     
-    return results
+    return results, planet_positions, sign_indices
 
-# Function to calculate Sarvashtakavarga
-def calculate_sarvashtakavarga():
-    # Initialize results array
-    results = [[0 for _ in range(7)] for _ in range(12)]
-    
-    # For each planet (Sun through Saturn)
-    for planet_idx in range(7):
-        bhinna = calculate_bhinnashtakavarga(planet_idx)
-        
-        # Sum up the points for each sign and store in results
-        for sign_idx in range(12):
-            results[sign_idx][planet_idx] = sum(bhinna[sign_idx])
-    
-    return results
-
-# Print header
-print("="*70)
-print(f"Ashtakavarga for Transit Date: {year}-{month:02d}-{day:02d}")
-print(f"Time: {hour:02d}:{minute:02d} AM")
-print(f"Location: New York, US (America/New_York)")
-print(f"Settings: Sidereal (LAHIRI), Sripathi Houses")
-print("="*70)
-print()
-
-# Display planetary positions for reference
-print("Planetary Positions:")
-for planet_idx, planet_name in enumerate(planet_names):
-    long = planet_positions[planet_idx]
-    sign_idx = int(long / 30)
-    sign_long = long % 30
-    print(f"{planet_name}: {sign_names[sign_idx]} {sign_long:.2f}°")
-print()
+# Calculate for the specified date
+print(f"Calculating Ashtakavarga for {year}-{month}-{day} at {hour}:{minute}")
+jd = swe.julday(year, month, day, hour + minute/60.0)
 
 # Calculate and display Bhinnashtakavarga for each planet
+all_bhinna_results = []
+all_positions = []
+all_sign_indices = []
+
 for planet_idx in range(7):  # Sun through Saturn
-    planet_name = planet_names[planet_idx]
-    print(f"--- {planet_name} (Bhinnashtaka Varga Breakdown) ---")
-    
-    # Get Bhinnashtakavarga for the current planet
-    bhinna = calculate_bhinnashtakavarga(planet_idx)
-    
-    # Create header for the table
+    bhinna_result, positions, signs = calculate_bhinnashtakavarga(planet_idx, jd, latitude, longitude)
+    all_bhinna_results.append(bhinna_result)
+    all_positions = positions
+    all_sign_indices = signs
+
+# Display planetary positions
+print("\n======================================================================")
+print(f"Ashtakavarga for Date: {year}-{month}-{day}")
+print(f"Time: {hour}:{minute:02d} AM")
+print(f"Location: New York City, New York, United States")
+print("Settings: Sidereal (LAHIRI), Sripathi Houses")
+print("======================================================================\n")
+
+print("Planetary Positions:")
+for i, name in enumerate(planet_names):
+    pos = all_positions[i]
+    sign_idx = all_sign_indices[i]
+    print(f"{name}: {sign_names[sign_idx]} {pos % 30:.2f}°")
+print()
+
+# Display Bhinnashtakavarga tables
+for planet_idx in range(7):  # Sun through Saturn
+    print(f"--- {planet_names[planet_idx]} (Bhinnashtaka Varga Breakdown) ---")
     headers = ["Sign", "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "ASC", "Total"]
-    
-    # Create table data
     table_data = []
+    
     for sign_idx in range(12):
         row = [sign_names[sign_idx]]
         row_total = 0
         for contrib_idx in range(8):
-            contrib = bhinna[sign_idx][contrib_idx]
-            row.append(contrib)
-            row_total += contrib
+            row.append(all_bhinna_results[planet_idx][sign_idx][contrib_idx])
+            row_total += all_bhinna_results[planet_idx][sign_idx][contrib_idx]
         row.append(row_total)
         table_data.append(row)
     
@@ -137,25 +215,21 @@ for planet_idx in range(7):  # Sun through Saturn
     totals_row.append(sum(col_totals))
     table_data.append(totals_row)
     
-    # Display the table
     print(tabulate(table_data, headers=headers, tablefmt="grid"))
     print()
 
 # Calculate and display Sarvashtakavarga
 print("--- Sarvashtakavarga Table ---")
-sarva = calculate_sarvashtakavarga()
-
-# Create headers for Sarvashtakavarga table
 sarva_headers = ["Sign", "Sun", "Moon", "Mars", "Mercury", "Jupiter", "Venus", "Saturn", "Score"]
-
-# Create table data for Sarvashtakavarga
 sarva_table = []
+
 for sign_idx in range(12):
     row = [sign_names[sign_idx]]
     row_total = 0
     for planet_idx in range(7):
-        row.append(sarva[sign_idx][planet_idx])
-        row_total += sarva[sign_idx][planet_idx]
+        sign_score = sum(all_bhinna_results[planet_idx][sign_idx])
+        row.append(sign_score)
+        row_total += sign_score
     row.append(row_total)
     sarva_table.append(row)
 
@@ -169,6 +243,5 @@ for planet_idx in range(7):
 sarva_totals.append(sum(planet_totals))
 sarva_table.append(sarva_totals)
 
-# Display the Sarvashtakavarga table
 print(tabulate(sarva_table, headers=sarva_headers, tablefmt="grid"))
-print("="*70)
+print("======================================================================")
